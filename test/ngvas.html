@@ -1,0 +1,17 @@
+
+
+
+<ngvas [width]="512" [height]="512">
+
+    <ngvas-circle [xy]="[0, 0]" [radius]="50"></ngvas-circle>
+    <ngvas-rectangle [xy]="[0, 0]" [size]="23" (click)=""></ngvas-rectangle>
+
+    <ngvas-polygon [translate]="[[0, 0], 1000]" [animate]="aniFunc"></ngvas-polygon>
+
+    <ngvas-text [font]="'Arial 48px'">This is text.</ngvas-text>
+
+    <ngvas-image [url]="'images/bird.jpg'" [xy]="[0, 0]" [size]="[100, 100]" [rotation]="0"></ngvas-image>
+
+    <ngvas-bezier-curve [points]="[[0, 0], [100, 100], [200, 200], [200, 0]]"></ngvas-quad-curve>
+
+</ngvas>

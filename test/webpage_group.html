@@ -1,0 +1,45 @@
+
+<html>
+
+    <canvas id="myCanvas" width="512" height="512" style="border: 1px solid #ccc"></canvas>
+
+    <script src="../dist/canvas.min.js"></script>
+    <script>
+
+        var img = new Image();
+        img.src = "bird.jpg";
+
+        var canvas = document.getElementById('myCanvas');
+        // canvas.addEventListener("click", (e, v) => console.log("Canvas", e, v));
+        var instance = CanvasLib.init(canvas, true);
+
+        const circle = instance.Circle()
+            .withFill("black").withRadius(250)
+            .originToCenter().translate(256, 256);
+
+        const group = instance.Group().origin(0, 130).translate(256, 256).rotate(360, 5000);
+
+        const rect = instance.Rectangle()
+            .withFill("red").resize(50, 50)
+            .originToCenter().translate(0, -50);
+
+        const circle2 = instance.Circle()
+            .withFill("yellow").withRadius(25)
+            .originToCenter().translate(30, 30);
+        
+        const triangle = instance.Line()
+            .withFill("blue")
+            .addLine([[0, -10], [25, 25]]).addLine([[25, 25], [-25, 25]]).addLine([[-25, 25], [0, -10]])
+            .originToCenter().translate(-40, 30);
+
+        group.addChild(rect);
+        group.addChild(circle2);
+        group.addChild(triangle);
+
+        instance.addChild(
+            circle,
+            group
+        );
+
+    </script>
+</html>

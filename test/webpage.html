@@ -1,0 +1,68 @@
+
+<html>
+
+    <canvas id="myCanvas" width="300" height="300" style="border: 1px solid #ccc"></canvas>
+
+    <script src="../dist/canvas.min.js"></script>
+    <script>
+
+        var img = new Image();
+        img.src = "bird.jpg";
+
+        var canvas = document.getElementById('myCanvas');
+        // canvas.addEventListener("click", (e, v) => console.log("Canvas", e, v));
+        var instance = CanvasLib.init(canvas, true);
+
+        const circle = instance.Circle()
+            .withFill("blue").withStroke(4)
+            .withRadius(5).withRadius(50, 5000, CanvasLib.tweens.easeOutElastic)
+            .originToCenter().translate(150, 150)
+            .withClip(instance.Circle().withRadius(30).translate(50, 0));
+        circle.withHitArea(CanvasLib.hitAreas.PixelHitArea).addEventListener("click", (e, v) => console.log("Circle", e, v));
+
+        const rect = instance.Rectangle().withFill("red").withStroke(2).resize(50, 50).originToCenter()
+            .translate(150, 150, 2000, CanvasLib.tweens.easeOutCubic)
+            .rotate(360, 5000, CanvasLib.tweens.easeOutSine);
+        // rect.addEventListener("click", (e, v) => console.log("Rect", e, v));
+
+        const text = instance.Text().withFill("red").textStyle("48px serif").withText("Hello")
+            // .resize(100, 0)
+            .originToCenter().translate(150, 150)
+            .rotate(360, 5000, CanvasLib.tweens.easeOutSine);
+        // text.addEventListener("click", (e, v) => console.log("Text", e, v));
+
+        const line = instance.Line().withFill().withStroke(5)
+            .addLine([[20, 20], [50, 30]]).addLine([[50, 30], [200, 200]]).addLine([[200, 200], [100, 200]])
+            .originToCenter()
+            .translate(150, 150, 1000).rotate(360, 5000, CanvasLib.tweens.easeOutSine, s => console.log("Tween End", s));
+
+        const arc = instance.Arc().withFill("green").withStroke(2)
+            .withRadius(10).withRadius(50, 5000, CanvasLib.tweens.easeOutElastic)
+            .withAngle(10).withAngle(180, 5000, CanvasLib.tweens.easeOutElastic)
+            .connectToCenter()
+            .originToCenter().translate(200, 200);
+
+        const bCurve = instance.BezierCurve().withStroke(4)
+            .addCurve([[0, 0], [300, 20], [300, 100], [100, 200]])
+            .addCurve([[100, 200], [0, 300], [0, 20], [10, 20]])
+            .translate(150, 150).originToCenter().rotate(360, 7000, CanvasLib.tweens.easeOutElastic);
+
+        const free = instance.Poly()
+            .withFill("orange").withStroke(3)
+            .addLine([[10, 10], [200, 30]])
+            .addBezier([[220, 100], [200, 300], [10, 300], [10, 150]])
+            .originToCenter().translate(150, 150).rotate(360, 5000, CanvasLib.tweens.easeOutSine);
+
+        instance.addChild(
+            // text,
+            // free,
+            circle,
+            rect,
+            line,
+            arc,
+            bCurve
+            // instance.Image().withImage(img).resize(80, 80).originToCenter().translate(200, 100).rotate(10, 1000)
+        );
+
+    </script>
+</html>

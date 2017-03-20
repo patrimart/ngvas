@@ -2,10 +2,12 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 
 import { ComposeOverlay, ColorStyle, LineJoin, LineCap } from "../canvas/styles/interfaces";
-import { TweenFunc }                       from "../canvas/tweens/interfaces";
-import { BaseStyle, BaseStyleConstructor } from "../canvas/styles/BaseStyle";
-import { ConstraintFunction }              from "../canvas/constraints/interfaces";
-import { PixelHitArea }                    from "../canvas/hit-area/PixelHitArea";
+import { BaseStyle, BaseStyleConstructor }               from "../canvas/styles/BaseStyle";
+import { ConstraintFunction }                            from "../canvas/constraints/interfaces";
+import { PixelHitArea }                                  from "../canvas/hit-area/PixelHitArea";
+
+import { TweenInput } from "./interfaces";
+
 
 /**
  * The base class for all shape components.
@@ -15,132 +17,185 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
     private _shape: S;
     private _delayedSetters: Array<(s: S) => void> = [];
 
-
     @Input("name")
     public name: string;
 
     @Input("active")
-    public set active (a: boolean) { this.execOrDelay((s: S) => s.isActive = a); };
+    public set active (a: boolean) { this.execOrDelay(s => s.isActive = a); };
 
     @Input("visible")
-    public set visible (v: boolean) { this.execOrDelay((s: S) => s.isVisible = v); };
+    public set visible (v: boolean) { this.execOrDelay(s => s.isVisible = v); };
 
-    @Input("xy")
-    public set xy (xy: [number, number]) { this.execOrDelay((s: S) => { s.x = xy[0]; s.y = xy[1]; }); };
+    @Input("x")
+    public set x (x: number) { this.execOrDelay(s => s.x = x); };
+
+    @Input("y")
+    public set y (y: number) { this.execOrDelay(s => s.y = y); };
 
     @Input("origin")
     public set origin (xy: [number, number] | "center") {
         if (xy === "center") {
-            this.execOrDelay((s: S) => s.originToCenter());
+            this.execOrDelay(s => s.originToCenter = true);
         } else {
-            this.execOrDelay((s: S) => { s.originX = xy[0]; s.originY = xy[1]; });
+            this.execOrDelay(s => {
+                s.originX = xy[0];
+                s.originY = xy[1];
+            });
         }
     };
 
     @Input("width")
-    public set width (w: number) { this.execOrDelay((s: S) => s.width = w); };
+    public set width (w: number) { this.execOrDelay(s => s.width = w); };
 
     @Input("height")
-    public set height (h: number) { this.execOrDelay((s: S) => s.height = h); };
+    public set height (h: number) { this.execOrDelay(s => s.height = h); };
 
     @Input("rotation")
-    public set rotation (r: number) { this.execOrDelay((s: S) => s.rotation = r); };
+    public set rotation (r: number) { this.execOrDelay(s => s.rotation = r); };
+
+
+    /////////////////////////////////////////////
+    // TWEENER INPUTS
 
     @Input("scale")
-    public set scale (xy: [number, number] | number) {
-        if (typeof xy === "number") {
-            this.execOrDelay((s: S) => { s.scaleX = xy; s.scaleY = xy; });
-        } else {
-            this.execOrDelay((s: S) => { s.scaleX = xy[0]; s.scaleY = xy[1]; });
+    public set scale (v: TweenInput<S, [number, number]>) {
+
+        if (typeof v[0] === "number") {
+            const [x, y] = v as [number, number];
+            this.execOrDelay(s => s.scale(x, y));
+        } else if (Array.isArray(v[0])) {
+            const [ [x, y], duration, tween, callback ] = v as any;
+            this.execOrDelay(s => s.scale(x, y, duration, tween, callback));
         }
-    };
+    }
+
+    @Input("size")
+    public set size (v: TweenInput<S, [number, number]>) {
+
+        if (typeof v[0] === "number") {
+            const [w, h] = v as [number, number];
+            this.execOrDelay(s => s.resize(w, h));
+        } else if (Array.isArray(v[0])) {
+            const [ [w, h], duration, tween, callback ] = v as any;
+            this.execOrDelay(s => s.resize(w, h, duration, tween, callback));
+        }
+    }
 
     @Input("skew")
-    public set skew (xy: [number, number]) { this.execOrDelay((s: S) => { s.skewX = xy[0]; s.skewY = xy[1]; }); };
+    public set skew (v: TweenInput<S, [number, number]>) {
 
-
-
-    @Input("scaler")
-    public set scaler (v: [[number, number | undefined], number | undefined, TweenFunc | undefined]) {
-        this.execOrDelay((s: S) => s.scale(v[0][0], v[0][1], v[1], v[2]));
+        if (typeof v[0] === "number") {
+            const [x, y] = v as [number, number];
+            this.execOrDelay(s => s.skew(x, y));
+        } else if (Array.isArray(v[0])) {
+            const [ [x, y], duration, tween, callback ] = v as any;
+            this.execOrDelay(s => s.skew(x, y, duration, tween, callback));
+        }
     }
 
-    @Input("sizer")
-    public set sizer (v: [[number, number | undefined], number | undefined, TweenFunc | undefined]) {
-        this.execOrDelay((s: S) => s.resize(v[0][0], v[0][1], v[1], v[2]));
+    @Input("rotate")
+    public set rotate (v: TweenInput<S, number>) {
+
+        if (typeof v === "number") {
+            const r = v as number;
+            this.execOrDelay(s => s.rotate(r));
+        } else if (Array.isArray(v[0])) {
+            const [ r, duration, tween, callback ] = v as any;
+            this.execOrDelay(s => s.rotate(r, duration, tween, callback));
+        }
     }
 
-    @Input("skewer")
-    public set skewer (v: [[number, number | undefined], number | undefined, TweenFunc | undefined]) {
-        this.execOrDelay((s: S) => s.skew(v[0][0], v[0][1], v[1], v[2]));
+    @Input("translate")
+    public set translate (v: TweenInput<S, [number, number]>) {
+
+        if (typeof v[0] === "number") {
+            const [x, y] = v as [number, number];
+            this.execOrDelay(s => s.translate(x, y));
+        } else if (Array.isArray(v[0])) {
+            const [ [x, y], duration, tween, callback ] = v as any;
+            this.execOrDelay(s => s.translate(x, y, duration, tween, callback));
+        }
     }
 
-    @Input("rotater")
-    public set rotater (v: [number, number | undefined, TweenFunc | undefined]) {
-        this.execOrDelay((s: S) => s.rotate(v[0], v[1], v[2]));
-    }
-
-    @Input("mover")
-    public set mover (v: [[number, number | undefined], number | undefined, TweenFunc | undefined]) {
-        this.execOrDelay((s: S) => s.translate(v[0][0], v[0][1], v[1], v[2]));
-    }
-
-    @Input("animator")
-    public set animator (f: ((shape: S) => boolean) | undefined) {
+    @Input("animate")
+    public set animate (f: ((shape: S) => boolean) | undefined) {
         if (f === undefined) {
-            this.execOrDelay((s: S) => s.removeAnimationFunction());
+            this.execOrDelay(s => s.removeAnimationFunction());
         } else {
-            this.execOrDelay((s: S) => s.setAnimationFunction(f));
+            this.execOrDelay(s => s.setAnimationFunction(f));
         }
     }
 
-    @Input("constrainer")
-    public set constrainer (fs: ConstraintFunction[] | undefined) {
+    @Input("constrain")
+    public set constrain (fs: ConstraintFunction[] | undefined) {
         if (fs === undefined) {
-            this.execOrDelay((s: S) => s.withConstraint());
+            this.execOrDelay(s => s.withConstraint());
         } else {
-            this.execOrDelay((s: S) => s.withConstraint(...fs));
+            this.execOrDelay(s => s.withConstraint(...fs));
         }
     }
+
+
+    /////////////////////////////////////////////
+    // HIT AREA
 
     @Input("hitArea")
     public set hitArea (Clazz: typeof PixelHitArea) {
-        this.execOrDelay((s: S) => s.withHitArea(Clazz));
+        this.execOrDelay(s => s.withHitArea(Clazz));
     }
 
 
+    /////////////////////////////////////////////
+    // STYLE INPUTS
+
     @Input("opacity")
     public set opacity (alpha: number) {
-        this.execOrDelay((s: S) => s.opacity = alpha);
+        this.execOrDelay(s => s.opacity = alpha);
     }
 
     @Input("compose")
     public set compose (c: { alpha?: number, overlay?: ComposeOverlay }) {
-        this.execOrDelay((s: S) => s.compose(c.alpha, c.overlay));
+        this.execOrDelay(s => s.compose(c.alpha, c.overlay));
     }
 
     @Input("fill")
-    public set fill (st: ColorStyle | undefined) {
-        this.execOrDelay((s: S) => s.withFill(st));
+    public set fill (st: TweenInput<S, ColorStyle>) {
+        if (Array.isArray(st)) {
+            this.execOrDelay(s => s.withFill(st[0], st[1], st[2], st[3]));
+        } else {
+            this.execOrDelay(s => s.withFill(st));
+        }
     }
 
     @Input("stroke")
-    public set stroke (st: { width?: number, style?: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number }) {
-        this.execOrDelay((s: S) => s.withStroke(st.width, st.style, st.join, st.cap, st.dashOffset));
+    public set stroke (st: TweenInput<S, { width: number, style: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number }>) {
+        if (Array.isArray(st)) {
+            this.execOrDelay(s => {
+                s.withStroke(st[0].width, st[0].style, st[0].join, st[0].cap, st[0].dashOffset);
+                s.withStroke(st[0].width, st[0].style, st[1], st[2], st[3]);
+            });
+        } else {
+            this.execOrDelay(s => s.withStroke(st.width, st.style, st.join, st.cap, st.dashOffset));
+        }
     }
 
     @Input("shadow")
-    public set shadow (sh: { blur?: number, color?: string, offsetX?: number, offsetY?: number }) {
-        this.execOrDelay((s: S) => s.withShadow(sh.blur, sh.color, sh.offsetX, sh.offsetY));
+    public set shadow (sh: TweenInput<S, { blur: number, color: string, offsetX: number, offsetY: number }>) {
+        if (Array.isArray(sh)) {
+            this.execOrDelay(s => s.withShadow(sh[0].blur, sh[0].color, sh[0].offsetX, sh[0].offsetY, sh[1], sh[2], sh[3]));
+        } else {
+            this.execOrDelay(s => s.withShadow(sh.blur, sh.color, sh.offsetX, sh.offsetY));
+        }
     }
 
-    // @Input("click")
-    // public set click (listener: any) {
-    //     this.execOrDelay((s: S) => s.addEventListener("click", () =>));
-    // }
-
+    @Input("click")
+    public set click (listener: any) {
+        if (listener !== undefined) {
+            this.execOrDelay(shape => shape.addEventListener("click", s => { this.clickEvent.emit(s); }));
+        }
+    }
     @Output("click")
-    public clickEvent = new EventEmitter<MouseEvent>();
+    public clickEvent = new EventEmitter<S>();
 
 
     @Output("shape")

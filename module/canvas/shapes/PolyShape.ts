@@ -26,17 +26,13 @@ export class PolyShape extends BaseStyle {
 
     public get height () { return this.boundary.height; }
 
-    public originToCenter (): this {
-        const [x, y] = this.boundary.center;
-        return this.origin(x, y);
-    }
-
 
 
     public addLine (line: Line): this {
         this._sidesCollection.push(line);
         this.boundary.setPoint(line[0]);
         this.boundary.setPoint(line[1]);
+        if (this.originToCenter) { this.originToCenter = true; }
         return this;
     }
 
@@ -46,6 +42,7 @@ export class PolyShape extends BaseStyle {
         this.boundary.setPoint(p1);
         this.boundary.setPoint(p2);
         this.boundary.setPoint([(p1[0] + cp1[0] + cp2[0] + p2[0]) / 4, (p1[0] + cp1[0] + cp2[0] + p2[0]) / 4]);
+        if (this.originToCenter) { this.originToCenter = true; }
         return this;
     }
 
@@ -55,6 +52,7 @@ export class PolyShape extends BaseStyle {
         this.boundary.setPoint(p1);
         this.boundary.setPoint(p2);
         this.boundary.setPoint([(p1[0] + cp1[0] + p2[0]) / 3, (p1[0] + cp1[0] + p2[0]) / 3]);
+        if (this.originToCenter) { this.originToCenter = true; }
         return this;
     }
 

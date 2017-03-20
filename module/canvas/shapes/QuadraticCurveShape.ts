@@ -31,6 +31,7 @@ export class QuadraticCurveShape extends BaseStyle {
         this.boundary.setPoint(p1);
         this.boundary.setPoint(p2);
         this.boundary.setPoint([(p1[0] + cp1[0] + p2[0]) / 3, (p1[0] + cp1[0] + p2[0]) / 3]);
+        if (this.originToCenter) { this.originToCenter = true; }
         return this;
     }
 

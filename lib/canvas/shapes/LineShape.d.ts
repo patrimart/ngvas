@@ -9,7 +9,6 @@ export declare class LineShape extends BaseStyle {
     readonly type: ShapeType;
     width: number;
     height: number;
-    originToCenter(): this;
     addLine(line: Line): this;
     clear(): this;
     traceShape(ctx: CanvasRenderingContext2D): void;

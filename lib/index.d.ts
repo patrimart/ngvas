@@ -17,7 +17,8 @@ import { QuadraticCurveShape as _QuadraticCurveShape } from "./canvas/shapes/Qua
 import { RectShape as _RectShape } from "./canvas/shapes/RectShape";
 import { TextShape as _TextShape } from "./canvas/shapes/TextShape";
 export { NgvasModule } from "./ngvas.module";
-export declare namespace library {
+import { TweenInput as _TweenInput } from "./components/interfaces";
+export declare namespace types {
     type Point = _shapes.Point;
     type Line = _shapes.Line;
     type QuadraticCurve = _shapes.QuadraticCurve;
@@ -29,14 +30,17 @@ export declare namespace library {
     type LineCap = _styles.LineCap;
     type TextAlign = _styles.TextAlign;
     type TextBaseline = _styles.TextBaseline;
-    namespace hitAreas {
-        type IHitAres = _hitAreas.IHitArea;
-        const PixelHitArea: typeof _PixelHitArea;
-    }
-    namespace tweens {
-        type TweenFunc = _TF;
-        const easings: typeof _tweenEasings;
-    }
+    type TweenInput<S extends _BaseStyle, V> = _TweenInput<S, V>;
+}
+export declare namespace hitAreas {
+    type IHitAres = _hitAreas.IHitArea;
+    const PixelHitArea: typeof _PixelHitArea;
+}
+export declare namespace tweens {
+    type TweenFunc = _TF;
+    const easings: typeof _tweenEasings;
+}
+export declare namespace shapes {
     const BaseShape: typeof _BaseShape;
     const BaseStyle: typeof _BaseStyle;
     const CanvasGroup: typeof _CanvasGroup;

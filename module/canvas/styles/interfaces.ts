@@ -12,7 +12,7 @@ export type ComposeOverlay = "source-over" | "source-in" | "source-out" | "sourc
             "lighten" | "color-dodge" | "color-burn" | "hard-light" | "soft-light" | "difference" |
             "exclusion" | "hue" | "saturation" | "color" | "luminosity";
 
-export type ColorStyle = string | CanvasGradient | CanvasPattern;
+export type ColorStyle = number | string | CanvasGradient | CanvasPattern;
 export type LineJoin = "miter" | "bevel" | "round";
 export type LineCap = "butt" | "round" | "square";
 export type TextAlign = "left" | "right" | "center" | "start" | "end";

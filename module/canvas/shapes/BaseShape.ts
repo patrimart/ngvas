@@ -28,7 +28,6 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     private _hitArea: IHitArea;
     private _constraints: ConstraintFunction[] = [];
-    protected _clipShape: BaseShape | undefined;
 
     private _currentCtxt: ContextTransformer = {
         scaleX : 0, scaleY : 0,
@@ -48,7 +47,10 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
     private _skewY = 0;
     private _isActive = true;
     private _isVisible = true;
+    private _originToCenter = false;
 
+
+    protected _clipShape: BaseShape | undefined;
     protected tweenManager = new TweenManager();
     protected boundary = new Boundary();
 
@@ -63,8 +65,6 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     public abstract get type (): ShapeType;
 
-    // public abstract addPoints (...points: Point[]): this;
-    // public abstract getPoints (): Point[];
     public abstract traceShape (ctx: CanvasRenderingContext2D): void;
 
 
@@ -77,14 +77,20 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
     public get y () { return this._y; }
 
     public set width (v: number) {
+        const h = this.height;
+        this.boundary.reset();
         this.boundary.setPoint([0, 0]);
-        this.boundary.setPoint([v, 0]);
+        this.boundary.setPoint([v, h]);
+        if (this._originToCenter) { this.originToCenter = true; }
     }
     public get width () { return this.boundary.width; }
 
     public set height (v: number) {
+        const w = this.width;
+        this.boundary.reset();
         this.boundary.setPoint([0, 0]);
-        this.boundary.setPoint([0, v]);
+        this.boundary.setPoint([w, v]);
+        if (this._originToCenter) { this.originToCenter = true; }
     }
     public get height () { return this.boundary.height; }
 
@@ -115,6 +121,12 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
     public set isVisible (v: boolean) { this._isVisible = v; }
     public get isVisible () { return this._isVisible; }
 
+    public set originToCenter (v: boolean) {
+        this._originToCenter = v;
+        if (v) { [this.originX, this.originY] = this.boundary.center; }
+    }
+    public get originToCenter () { return this._originToCenter; }
+
 
     public getBoundary (): Boundary {
         return this.boundary.clone();
@@ -127,7 +139,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     public origin (x: number, y: number, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["originX", "originY"], callback);
+            this.tweenManager.addTween(this, tween, duration, [x, y], ["originX", "originY"], callback, 4);
         } else {
             this.originX = x;
             this.originY = y;
@@ -135,13 +147,9 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
         return this;
     }
 
-    public originToCenter (): this {
-        return this.origin(this.width / 2, this.height / 2);
-    }
-
     public resize (w: number, h = w, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [w, h], ["width", "height"], callback);
+            this.tweenManager.addTween(this, tween, duration, [w, h], ["width", "height"], callback, 5);
         } else {
             this.width = w;
             this.height = h;
@@ -160,7 +168,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     public scale (x: number, y = x, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["scaleX", "scaleY"], callback);
+            this.tweenManager.addTween(this, tween, duration, [x, y], ["scaleX", "scaleY"], callback, 20);
         } else {
             this.scaleX += x;
             this.scaleY += y;
@@ -170,7 +178,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     public skew (x: number, y = x, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["skewX", "skewY"], callback);
+            this.tweenManager.addTween(this, tween, duration, [x, y], ["skewX", "skewY"], callback, 9);
         } else {
             this.skewX += x;
             this.skewY += y;
@@ -180,7 +188,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     public translate (x: number, y: number, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["x", "y"], callback);
+            this.tweenManager.addTween(this, tween, duration, [x, y], ["x", "y"], callback, 1);
         } else {
             this.x += x;
             this.y += y;

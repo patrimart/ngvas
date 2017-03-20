@@ -55,10 +55,12 @@ export interface IShape extends IShapeProps {
     isVisible: boolean;
     isActive: boolean;
 
+    originToCenter: boolean;
+
     getBoundary (): Boundary;
 
     origin (x: number, y: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
-    originToCenter (duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
+    // originToCenter (duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     resize (w: number, h: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     rotate (deg: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     scale (x: number, y: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;

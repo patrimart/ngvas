@@ -10,7 +10,9 @@ export class StyleManager implements IStyleCache, IComposeStyle, IFillStyle, ISh
     private ctxValues: any = {};
 
 
-    constructor (private ctx: CanvasRenderingContext2D) {}
+    constructor (
+        private ctx: CanvasRenderingContext2D,
+    ) {}
 
     public get hasFill (): boolean {
         return !! this.ctxValues.fillStyle;
@@ -43,14 +45,6 @@ export class StyleManager implements IStyleCache, IComposeStyle, IFillStyle, ISh
         return this;
     }
 
-    public withShadow (blur?: number, color?: string, offsetX?: number, offsetY?: number): this {
-        this.ctxValues.shadowBlur = undefinedOr(blur, this.ctxValues.shadowBlur);
-        this.ctxValues.shadowColor = undefinedOr(color, this.ctxValues.shadowColor);
-        this.ctxValues.shadowOffsetX = undefinedOr(offsetX, this.ctxValues.shadowOffsetX);
-        this.ctxValues.shadowOffsetY = undefinedOr(offsetY, this.ctxValues.shadowOffsetY);
-        return this;
-    }
-
     public withStroke (width?: number, style?: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number): this {
         this.ctxValues.lineCap = undefinedOr(cap, this.ctxValues.lineCap);
         this.ctxValues.lineDashOffset = undefinedOr(dashOffset, this.ctxValues.lineDashOffset);
@@ -58,6 +52,14 @@ export class StyleManager implements IStyleCache, IComposeStyle, IFillStyle, ISh
         this.ctxValues.lineWidth = undefinedOr(width, this.ctxValues.lineWidth);
         this.ctxValues.strokeStyle = undefinedOr(style, this.ctxValues.strokeStyle);
         this.ctxValues.miterLimit = undefinedOr(miterLimit, this.ctxValues.miterLimit);
+        return this;
+    }
+
+    public withShadow (blur?: number, color?: string, offsetX?: number, offsetY?: number): this {
+        this.ctxValues.shadowBlur = undefinedOr(blur, this.ctxValues.shadowBlur);
+        this.ctxValues.shadowColor = undefinedOr(color, this.ctxValues.shadowColor);
+        this.ctxValues.shadowOffsetX = undefinedOr(offsetX, this.ctxValues.shadowOffsetX);
+        this.ctxValues.shadowOffsetY = undefinedOr(offsetY, this.ctxValues.shadowOffsetY);
         return this;
     }
 

@@ -23,17 +23,13 @@ export class LineShape extends BaseStyle {
     public set width (v: number) { throw new ReferenceError(`LineShape width cannot be set (${v}).`); }
     public set height (v: number) { throw new ReferenceError(`LineShape height cannot be set (${v}).`); }
 
-    public originToCenter (): this {
-        const [x, y] = this.boundary.center;
-        return this.origin(x, y);
-    }
-
 
 
     public addLine (line: Line): this {
         this._linePoints.push(line);
         this.boundary.setPoint(line[0]);
         this.boundary.setPoint(line[1]);
+        if (this.originToCenter) { this.originToCenter = true; }
         return this;
     }
 

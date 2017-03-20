@@ -25,16 +25,12 @@ export class ArcShape extends BaseStyle {
 
     public get type () { return ShapeType.LINE; }
 
-    public originToCenter (): this {
-        return this.origin(0, 0);
-    }
-
-
 
     public set radius (r: number) {
         this.boundary.reset();
         this.boundary.setPoint([-r, -r]);
         this.boundary.setPoint([r, r]);
+        if (this.originToCenter) { this.originToCenter = true; }
     }
 
     public get radius () {
@@ -50,7 +46,7 @@ export class ArcShape extends BaseStyle {
 
     public withRadius (r: number, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback);
+            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback, 5);
         } else {
             this.radius = r;
         }
@@ -59,15 +55,15 @@ export class ArcShape extends BaseStyle {
 
     public withAngle (deg: number, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [deg], ["angle"], callback);
+            this.tweenManager.addTween(this, tween, duration, [deg], ["angle"], callback, 10);
         } else {
             this.angle = deg;
         }
         return this;
     }
 
-    public connectToCenter (): this {
-        this._connectToCenter = true;
+    public connectToCenter (c: boolean): this {
+        this._connectToCenter = c;
         return this;
     }
 

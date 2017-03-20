@@ -10,7 +10,6 @@ export declare class BezierCurveShape extends BaseStyle {
     readonly type: ShapeType;
     readonly width: number;
     readonly height: number;
-    originToCenter(): this;
     readonly numCurves: number;
     addCurve(curve: BezierCurve): this;
     clear(): this;

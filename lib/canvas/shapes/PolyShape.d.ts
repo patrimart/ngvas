@@ -9,7 +9,6 @@ export declare class PolyShape extends BaseStyle {
     readonly type: ShapeType;
     readonly width: number;
     readonly height: number;
-    originToCenter(): this;
     addLine(line: Line): this;
     addBezier(curve: BezierCurve): this;
     addQuadratic(curve: QuadraticCurve): this;

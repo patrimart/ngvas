@@ -25,7 +25,6 @@ export declare abstract class BaseShape implements IShape, ITraceable, IConstrai
     private _aniFunc;
     private _hitArea;
     private _constraints;
-    protected _clipShape: BaseShape | undefined;
     private _currentCtxt;
     private _x;
     private _y;
@@ -38,6 +37,8 @@ export declare abstract class BaseShape implements IShape, ITraceable, IConstrai
     private _skewY;
     private _isActive;
     private _isVisible;
+    private _originToCenter;
+    protected _clipShape: BaseShape | undefined;
     protected tweenManager: TweenManager;
     protected boundary: Boundary;
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, _name?: string);
@@ -58,11 +59,11 @@ export declare abstract class BaseShape implements IShape, ITraceable, IConstrai
     skewY: number;
     isActive: boolean;
     isVisible: boolean;
+    originToCenter: boolean;
     getBoundary(): Boundary;
     readonly hitArea: IHitArea | undefined;
     readonly contextTransform: ContextTransformer;
     origin(x: number, y: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
-    originToCenter(): this;
     resize(w: number, h?: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     rotate(deg: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     scale(x: number, y?: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;

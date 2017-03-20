@@ -1,10 +1,10 @@
 
 
-import { NgModule, Component }    from "@angular/core";
+import { NgModule, Component, AfterViewInit }    from "@angular/core";
 import { BrowserModule }          from "@angular/platform-browser";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 
-import { NgvasModule } from "ngvas";
+import { NgvasModule, tweens } from "ngvas";
 
 
 @Component({
@@ -12,25 +12,35 @@ import { NgvasModule } from "ngvas";
   template: `
     <h1>Ngvas App Demo</h1>
     <ngvas [width]="500" [height]="500">
-      <template ngFor let-rect [ngForOf]="rects">
-        <ngvas-rectangle [fill]="'red'" [name]="'Rect_' + rect" [xy]="[rect, rect]" [width]="rect" [height]="rect"></ngvas-rectangle>
-      </template>
+      <ngvas-circle [fill]="fill" [translate]="xy" [radius]="radius" [rotate]="rotate" origin="center"></ngvas-circle>
     </ngvas>
   `,
 })
-class AppComponent {
+class AppComponent implements AfterViewInit {
 
-  private _rects = [
-    10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
-  ];
+  private _step   = 0;
+  private _radius = [ 20, 80, 20, 80 ];
+  private _xy     = [ [100, 100], [400, 100], [400, 400], [100, 400] ];
+  private _fill   = [ 0xff0000, 0xffff00, 0x00ff00, 0x0000ff ];
 
-  public rects = [10];
+  public radius: any = this._radius[0];
+  public rotate: any = 0;
+  public xy: any     = this._xy[0];
+  public fill: any   = this._fill[0];
 
-  constructor () {
-    setTimeout(() => this.rects.push(this._rects.pop()), 1000);
-    setTimeout(() => this.rects.push(this._rects.pop()), 2000);
-    setTimeout(() => this.rects.push(this._rects.pop()), 3000);
-    setTimeout(() => this.rects.push(this._rects.pop()), 4000);
+  public ngAfterViewInit () {
+    this.tweenComplete();
+  }
+
+  public tweenComplete () {
+    // Prevents Angular Error: "Expression has changed after it was checked."
+    setTimeout(() => {
+      if (++this._step > 3) { this._step = 0; }
+      this.radius = [ this._radius[this._step]    , 1000, tweens.easings.easeInOutSine, () => this.tweenComplete() ];
+      this.rotate = [ this._radius[this._step] * 5, 1000, tweens.easings.easeInOutSine ];
+      this.xy     = [ this._xy[this._step]        , 1000, tweens.easings.easeInOutSine ];
+      this.fill   = [ this._fill[this._step]      , 1000, tweens.easings.easeInOutSine ];
+    });
   }
 }
 

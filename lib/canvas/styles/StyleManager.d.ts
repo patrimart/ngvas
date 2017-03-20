@@ -9,8 +9,8 @@ export declare class StyleManager implements IStyleCache, IComposeStyle, IFillSt
     opacity: number;
     compose(alpha?: number, overlay?: ComposeOverlay): this;
     withFill(style?: ColorStyle): this;
-    withShadow(blur?: number, color?: string, offsetX?: number, offsetY?: number): this;
     withStroke(width?: number, style?: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number): this;
+    withShadow(blur?: number, color?: string, offsetX?: number, offsetY?: number): this;
     withText(): never;
     textStyle(font?: string, align?: TextAlign, baseline?: TextBaseline): this;
     begin(): void;

@@ -4,8 +4,8 @@ import {
 } from "@angular/core";
 
 import { ArcShape }           from "../canvas/shapes/ArcShape";
-import { TweenFunc }          from "../canvas/tweens/interfaces";
 import { NgvasBaseComponent } from "./base.component";
+import { TweenInput }         from "./interfaces";
 
 
 @Component({
@@ -21,22 +21,27 @@ export class NgvasArcComponent extends NgvasBaseComponent<ArcShape> {
         super(ArcShape);
     }
 
-
-    @Input("radius")
-    public set radius (r: number) { this.execOrDelay((s: ArcShape) => s.radius = r); };
-
-    @Input("angle")
-    public set angle (deg: number) { this.execOrDelay((s: ArcShape) => s.angle = deg); };
-
-
-    @Input("radier")
-    public set radier (v: [number, number | undefined, TweenFunc | undefined]) {
-        this.execOrDelay((s: ArcShape) => s.withRadius(v[0], v[1], v[2]));
+    @Input("connectToCenter")
+    public set connectToCenter (c: boolean) {
+        this.execOrDelay((s: ArcShape) => s.connectToCenter(c));
     }
 
-    @Input("angler")
-    public set angler (v: [number, number | undefined, TweenFunc | undefined]) {
-        this.execOrDelay((s: ArcShape) => s.withAngle(v[0], v[1], v[2]));
+    @Input("radius")
+    public set radius (v: TweenInput<ArcShape, number>) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s: ArcShape) => s.withRadius(v[0], v[1], v[2], v[3]));
+        } else {
+            this.execOrDelay((s: ArcShape) => s.withRadius(v));
+        }
+    }
+
+    @Input("angle")
+    public set angle (v: TweenInput<ArcShape, number>) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s: ArcShape) => s.withAngle(v[0], v[1], v[2], v[3]));
+        } else {
+            this.execOrDelay((s: ArcShape) => s.withAngle(v));
+        }
     }
 
 }

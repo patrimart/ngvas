@@ -26,11 +26,6 @@ export class BezierCurveShape extends BaseStyle {
 
     public get height () { return this._boundary.height; }
 
-    public originToCenter (): this {
-        const [x, y] = this._boundary.center;
-        return this.origin(x, y);
-    }
-
 
 
     public get numCurves (): number {
@@ -43,6 +38,7 @@ export class BezierCurveShape extends BaseStyle {
         this._boundary.setPoint(p1);
         this._boundary.setPoint(p2);
         this._boundary.setPoint([(p1[0] + cp1[0] + cp2[0] + p2[0]) / 4, (p1[0] + cp1[0] + cp2[0] + p2[0]) / 4]);
+        if (this.originToCenter) { this.originToCenter = true; }
         return this;
     }
 

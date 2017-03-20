@@ -7,7 +7,7 @@
 		exports["ngvas"] = factory(require("@angular/core"), require("@angular/platform-browser"), require("@angular/common"));
 	else
 		root["ngvas"] = factory(root["@angular/core"], root["@angular/platform-browser"], root["@angular/common"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_18__, __WEBPACK_EXTERNAL_MODULE_33__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_18__, __WEBPACK_EXTERNAL_MODULE_34__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 34);
+/******/ 	return __webpack_require__(__webpack_require__.s = 35);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,12 +91,16 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 Object.defineProperty(exports, "__esModule", { value: true });
 const BaseShape_1 = __webpack_require__(7);
 const StyleManager_1 = __webpack_require__(21);
+const color_style_parser_1 = __webpack_require__(22);
 /**
  * Draws a filled and/or stroked rectangle.
  */
 class BaseStyle extends BaseShape_1.BaseShape {
     constructor(canvas, ctx, name) {
         super(canvas, ctx, name);
+        this._fillColorRGBA = [0, 0, 0, 1];
+        this._strokeColorRGBA = [0, 0, 0, 1];
+        this._shadowColorRGBA = [0, 0, 0, 1];
         this.styleManager = new StyleManager_1.StyleManager(this.ctx);
     }
     set isVisible(v) {
@@ -115,16 +119,44 @@ class BaseStyle extends BaseShape_1.BaseShape {
         this.styleManager.compose(alpha, overlay);
         return this;
     }
-    withFill(style) {
-        this.styleManager.withFill(style);
+    withFill(style, duration = 0, tween, callback) {
+        if (duration > 1) {
+            const vals = color_style_parser_1.parseColorStyle(style);
+            const props = ["fillColorR", "fillColorG", "fillColorB", "fillColorA"];
+            this.tweenManager.addTween(this, tween, duration, vals, props, callback);
+        }
+        else {
+            style = typeof style === "number" ? `#${style.toString(16)}` : style;
+            this.fillColorRGBA = color_style_parser_1.parseColorStyle(style);
+            this.styleManager.withFill(style);
+        }
         return this;
     }
-    withStroke(width, style, join, cap, dashOffset, miterLimit) {
-        this.styleManager.withStroke(width, style, join, cap, dashOffset, miterLimit);
+    withStroke(...args) {
+        if (typeof args[2] === "number" && args[2] > 1) {
+            const vals = [args[0] | 0, ...color_style_parser_1.parseColorStyle(args[1])];
+            const props = ["strokeWidth", "strokeColorR", "strokeColorG", "strokeColorB", "strokeColorA"];
+            this.tweenManager.addTween(this, args[3], args[2], vals, props, args[4]);
+        }
+        else {
+            let [width, style, join, cap, dashOffset, miterLimit] = args;
+            style = typeof style === "number" ? `#${style.toString(16)}` : style;
+            this.strokeColorRGBA = color_style_parser_1.parseColorStyle(style);
+            this.styleManager.withStroke(width, style, join, cap, dashOffset, miterLimit);
+        }
         return this;
     }
-    withShadow(blur, color, offsetX, offsetY) {
-        this.styleManager.withShadow(blur, color, offsetX, offsetY);
+    withShadow(blur, color, offsetX, offsetY, duration = 0, tween, callback) {
+        if (duration > 1) {
+            const vals = [blur, ...color_style_parser_1.parseColorStyle(color), offsetX, offsetY];
+            const props = ["shadowBlur", "shadowColorR", "shadowColorG", "shadowColorB", "shadowColorA", "shadowOffsetX", "shadowOffsetY"];
+            this.tweenManager.addTween(this, tween, duration, vals, props, callback);
+        }
+        else {
+            color = typeof color === "number" ? `#${color.toString(16)}` : color;
+            this.shadowColorRGBA = color_style_parser_1.parseColorStyle(color);
+            this.styleManager.withShadow(blur, color, offsetX, offsetY);
+        }
         return this;
     }
     textStyle(font, align, baseline) {
@@ -141,6 +173,103 @@ class BaseStyle extends BaseShape_1.BaseShape {
         this.styleManager.clear();
         super.isVisible = true;
         return this;
+    }
+    /////////////////////////////////////////////
+    // TWEEN HELPERS
+    set fillColorRGBA(rgba) {
+        this._fillColorRGBA = rgba;
+    }
+    get fillColorRGBA() {
+        return this._fillColorRGBA;
+    }
+    set fillColorR(r) {
+        this._fillColorRGBA[0] = r | 0;
+    }
+    get fillColorR() {
+        return this._fillColorRGBA[0];
+    }
+    set fillColorG(g) {
+        this._fillColorRGBA[1] = g | 0;
+    }
+    get fillColorG() {
+        return this._fillColorRGBA[1];
+    }
+    set fillColorB(b) {
+        this._fillColorRGBA[2] = b | 0;
+    }
+    get fillColorB() {
+        return this._fillColorRGBA[2];
+    }
+    set fillColorA(a) {
+        this._fillColorRGBA[3] = a;
+        this.styleManager.withFill(color_style_parser_1.toRgbaString(this._fillColorRGBA));
+    }
+    get fillColorA() {
+        return this._fillColorRGBA[3];
+    }
+    set strokeColorRGBA(rgba) {
+        this._strokeColorRGBA = rgba;
+        console.log(this._strokeColorRGBA);
+    }
+    get strokeColorRGBA() {
+        return this._strokeColorRGBA;
+    }
+    set strokeColorR(r) {
+        this._strokeColorRGBA[0] = r | 0;
+    }
+    get strokeColorR() {
+        return this._strokeColorRGBA[0];
+    }
+    set strokeColorG(g) {
+        this._strokeColorRGBA[1] = g | 0;
+    }
+    get strokeColorG() {
+        return this._strokeColorRGBA[1];
+    }
+    set strokeColorB(b) {
+        this._strokeColorRGBA[2] = b | 0;
+    }
+    get strokeColorB() {
+        return this._strokeColorRGBA[2];
+    }
+    set strokeColorA(a) {
+        this._strokeColorRGBA[3] = a;
+        this.styleManager.withFill(color_style_parser_1.toRgbaString(this._strokeColorRGBA));
+    }
+    get strokeColorA() {
+        return this._strokeColorRGBA[3];
+    }
+    set shadowColorRGBA(rgba) {
+        this._shadowColorRGBA = rgba;
+        console.log(this._shadowColorRGBA);
+    }
+    get shadowColorRGBA() {
+        return this._shadowColorRGBA;
+    }
+    set shadowColorR(r) {
+        this._shadowColorRGBA[0] = r | 0;
+    }
+    get shadowColorR() {
+        return this._shadowColorRGBA[0];
+    }
+    set shadowColorG(g) {
+        this._shadowColorRGBA[1] = g | 0;
+    }
+    get shadowColorG() {
+        return this._shadowColorRGBA[1];
+    }
+    set shadowColorB(b) {
+        this._shadowColorRGBA[2] = b | 0;
+    }
+    get shadowColorB() {
+        return this._shadowColorRGBA[2];
+    }
+    set shadowColorA(a) {
+        this._shadowColorRGBA[3] = a;
+        this.styleManager.withFill(color_style_parser_1.toRgbaString(this._shadowColorRGBA));
+    }
+    get shadowColorA() {
+        return this._shadowColorRGBA[3];
     }
 }
 exports.BaseStyle = BaseStyle;
@@ -188,93 +317,147 @@ class NgvasBaseComponent {
     constructor(Clazz) {
         this.Clazz = Clazz;
         this._delayedSetters = [];
-        // @Input("click")
-        // public set click (listener: any) {
-        //     this.execOrDelay((s: S) => s.addEventListener("click", () =>));
-        // }
         this.clickEvent = new core_1.EventEmitter();
         this.shapeOut = new core_1.EventEmitter();
     }
-    set active(a) { this.execOrDelay((s) => s.isActive = a); }
+    set active(a) { this.execOrDelay(s => s.isActive = a); }
     ;
-    set visible(v) { this.execOrDelay((s) => s.isVisible = v); }
+    set visible(v) { this.execOrDelay(s => s.isVisible = v); }
     ;
-    set xy(xy) { this.execOrDelay((s) => { s.x = xy[0]; s.y = xy[1]; }); }
+    set x(x) { this.execOrDelay(s => s.x = x); }
+    ;
+    set y(y) { this.execOrDelay(s => s.y = y); }
     ;
     set origin(xy) {
         if (xy === "center") {
-            this.execOrDelay((s) => s.originToCenter());
+            this.execOrDelay(s => s.originToCenter = true);
         }
         else {
-            this.execOrDelay((s) => { s.originX = xy[0]; s.originY = xy[1]; });
+            this.execOrDelay(s => {
+                s.originX = xy[0];
+                s.originY = xy[1];
+            });
         }
     }
     ;
-    set width(w) { this.execOrDelay((s) => s.width = w); }
+    set width(w) { this.execOrDelay(s => s.width = w); }
     ;
-    set height(h) { this.execOrDelay((s) => s.height = h); }
+    set height(h) { this.execOrDelay(s => s.height = h); }
     ;
-    set rotation(r) { this.execOrDelay((s) => s.rotation = r); }
+    set rotation(r) { this.execOrDelay(s => s.rotation = r); }
     ;
-    set scale(xy) {
-        if (typeof xy === "number") {
-            this.execOrDelay((s) => { s.scaleX = xy; s.scaleY = xy; });
+    /////////////////////////////////////////////
+    // TWEENER INPUTS
+    set scale(v) {
+        if (typeof v[0] === "number") {
+            const [x, y] = v;
+            this.execOrDelay(s => s.scale(x, y));
         }
-        else {
-            this.execOrDelay((s) => { s.scaleX = xy[0]; s.scaleY = xy[1]; });
+        else if (Array.isArray(v[0])) {
+            const [[x, y], duration, tween, callback] = v;
+            this.execOrDelay(s => s.scale(x, y, duration, tween, callback));
         }
     }
-    ;
-    set skew(xy) { this.execOrDelay((s) => { s.skewX = xy[0]; s.skewY = xy[1]; }); }
-    ;
-    set scaler(v) {
-        this.execOrDelay((s) => s.scale(v[0][0], v[0][1], v[1], v[2]));
+    set size(v) {
+        if (typeof v[0] === "number") {
+            const [w, h] = v;
+            this.execOrDelay(s => s.resize(w, h));
+        }
+        else if (Array.isArray(v[0])) {
+            const [[w, h], duration, tween, callback] = v;
+            this.execOrDelay(s => s.resize(w, h, duration, tween, callback));
+        }
     }
-    set sizer(v) {
-        this.execOrDelay((s) => s.resize(v[0][0], v[0][1], v[1], v[2]));
+    set skew(v) {
+        if (typeof v[0] === "number") {
+            const [x, y] = v;
+            this.execOrDelay(s => s.skew(x, y));
+        }
+        else if (Array.isArray(v[0])) {
+            const [[x, y], duration, tween, callback] = v;
+            this.execOrDelay(s => s.skew(x, y, duration, tween, callback));
+        }
     }
-    set skewer(v) {
-        this.execOrDelay((s) => s.skew(v[0][0], v[0][1], v[1], v[2]));
+    set rotate(v) {
+        if (typeof v === "number") {
+            const r = v;
+            this.execOrDelay(s => s.rotate(r));
+        }
+        else if (Array.isArray(v[0])) {
+            const [r, duration, tween, callback] = v;
+            this.execOrDelay(s => s.rotate(r, duration, tween, callback));
+        }
     }
-    set rotater(v) {
-        this.execOrDelay((s) => s.rotate(v[0], v[1], v[2]));
+    set translate(v) {
+        if (typeof v[0] === "number") {
+            const [x, y] = v;
+            this.execOrDelay(s => s.translate(x, y));
+        }
+        else if (Array.isArray(v[0])) {
+            const [[x, y], duration, tween, callback] = v;
+            this.execOrDelay(s => s.translate(x, y, duration, tween, callback));
+        }
     }
-    set mover(v) {
-        this.execOrDelay((s) => s.translate(v[0][0], v[0][1], v[1], v[2]));
-    }
-    set animator(f) {
+    set animate(f) {
         if (f === undefined) {
-            this.execOrDelay((s) => s.removeAnimationFunction());
+            this.execOrDelay(s => s.removeAnimationFunction());
         }
         else {
-            this.execOrDelay((s) => s.setAnimationFunction(f));
+            this.execOrDelay(s => s.setAnimationFunction(f));
         }
     }
-    set constrainer(fs) {
+    set constrain(fs) {
         if (fs === undefined) {
-            this.execOrDelay((s) => s.withConstraint());
+            this.execOrDelay(s => s.withConstraint());
         }
         else {
-            this.execOrDelay((s) => s.withConstraint(...fs));
+            this.execOrDelay(s => s.withConstraint(...fs));
         }
     }
+    /////////////////////////////////////////////
+    // HIT AREA
     set hitArea(Clazz) {
-        this.execOrDelay((s) => s.withHitArea(Clazz));
+        this.execOrDelay(s => s.withHitArea(Clazz));
     }
+    /////////////////////////////////////////////
+    // STYLE INPUTS
     set opacity(alpha) {
-        this.execOrDelay((s) => s.opacity = alpha);
+        this.execOrDelay(s => s.opacity = alpha);
     }
     set compose(c) {
-        this.execOrDelay((s) => s.compose(c.alpha, c.overlay));
+        this.execOrDelay(s => s.compose(c.alpha, c.overlay));
     }
     set fill(st) {
-        this.execOrDelay((s) => s.withFill(st));
+        if (Array.isArray(st)) {
+            this.execOrDelay(s => s.withFill(st[0], st[1], st[2], st[3]));
+        }
+        else {
+            this.execOrDelay(s => s.withFill(st));
+        }
     }
     set stroke(st) {
-        this.execOrDelay((s) => s.withStroke(st.width, st.style, st.join, st.cap, st.dashOffset));
+        if (Array.isArray(st)) {
+            this.execOrDelay(s => {
+                s.withStroke(st[0].width, st[0].style, st[0].join, st[0].cap, st[0].dashOffset);
+                s.withStroke(st[0].width, st[0].style, st[1], st[2], st[3]);
+            });
+        }
+        else {
+            this.execOrDelay(s => s.withStroke(st.width, st.style, st.join, st.cap, st.dashOffset));
+        }
     }
     set shadow(sh) {
-        this.execOrDelay((s) => s.withShadow(sh.blur, sh.color, sh.offsetX, sh.offsetY));
+        if (Array.isArray(sh)) {
+            this.execOrDelay(s => s.withShadow(sh[0].blur, sh[0].color, sh[0].offsetX, sh[0].offsetY, sh[1], sh[2], sh[3]));
+        }
+        else {
+            this.execOrDelay(s => s.withShadow(sh.blur, sh.color, sh.offsetX, sh.offsetY));
+        }
+    }
+    set click(listener) {
+        if (listener !== undefined) {
+            this.execOrDelay(shape => shape.addEventListener("click", s => { this.clickEvent.emit(s); }));
+        }
     }
     getShape() {
         return this._shape;
@@ -308,10 +491,15 @@ __decorate([
     __metadata("design:paramtypes", [Boolean])
 ], NgvasBaseComponent.prototype, "visible", null);
 __decorate([
-    core_1.Input("xy"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasBaseComponent.prototype, "xy", null);
+    core_1.Input("x"),
+    __metadata("design:type", Number),
+    __metadata("design:paramtypes", [Number])
+], NgvasBaseComponent.prototype, "x", null);
+__decorate([
+    core_1.Input("y"),
+    __metadata("design:type", Number),
+    __metadata("design:paramtypes", [Number])
+], NgvasBaseComponent.prototype, "y", null);
 __decorate([
     core_1.Input("origin"),
     __metadata("design:type", Object),
@@ -338,45 +526,35 @@ __decorate([
     __metadata("design:paramtypes", [Object])
 ], NgvasBaseComponent.prototype, "scale", null);
 __decorate([
+    core_1.Input("size"),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
+], NgvasBaseComponent.prototype, "size", null);
+__decorate([
     core_1.Input("skew"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
 ], NgvasBaseComponent.prototype, "skew", null);
 __decorate([
-    core_1.Input("scaler"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasBaseComponent.prototype, "scaler", null);
+    core_1.Input("rotate"),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
+], NgvasBaseComponent.prototype, "rotate", null);
 __decorate([
-    core_1.Input("sizer"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasBaseComponent.prototype, "sizer", null);
+    core_1.Input("translate"),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
+], NgvasBaseComponent.prototype, "translate", null);
 __decorate([
-    core_1.Input("skewer"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasBaseComponent.prototype, "skewer", null);
-__decorate([
-    core_1.Input("rotater"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasBaseComponent.prototype, "rotater", null);
-__decorate([
-    core_1.Input("mover"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasBaseComponent.prototype, "mover", null);
-__decorate([
-    core_1.Input("animator"),
+    core_1.Input("animate"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Function])
-], NgvasBaseComponent.prototype, "animator", null);
+], NgvasBaseComponent.prototype, "animate", null);
 __decorate([
-    core_1.Input("constrainer"),
+    core_1.Input("constrain"),
     __metadata("design:type", Array),
     __metadata("design:paramtypes", [Array])
-], NgvasBaseComponent.prototype, "constrainer", null);
+], NgvasBaseComponent.prototype, "constrain", null);
 __decorate([
     core_1.Input("hitArea"),
     __metadata("design:type", Object),
@@ -407,6 +585,11 @@ __decorate([
     __metadata("design:type", Object),
     __metadata("design:paramtypes", [Object])
 ], NgvasBaseComponent.prototype, "shadow", null);
+__decorate([
+    core_1.Input("click"),
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
+], NgvasBaseComponent.prototype, "click", null);
 __decorate([
     core_1.Output("click"),
     __metadata("design:type", Object)
@@ -574,13 +757,13 @@ class ArcShape extends BaseStyle_1.BaseStyle {
         this._connectToCenter = false;
     }
     get type() { return interfaces_1.ShapeType.LINE; }
-    originToCenter() {
-        return this.origin(0, 0);
-    }
     set radius(r) {
         this.boundary.reset();
         this.boundary.setPoint([-r, -r]);
         this.boundary.setPoint([r, r]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
     }
     get radius() {
         return this.width / 2;
@@ -593,7 +776,7 @@ class ArcShape extends BaseStyle_1.BaseStyle {
     }
     withRadius(r, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback);
+            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback, 5);
         }
         else {
             this.radius = r;
@@ -602,15 +785,15 @@ class ArcShape extends BaseStyle_1.BaseStyle {
     }
     withAngle(deg, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [deg], ["angle"], callback);
+            this.tweenManager.addTween(this, tween, duration, [deg], ["angle"], callback, 10);
         }
         else {
             this.angle = deg;
         }
         return this;
     }
-    connectToCenter() {
-        this._connectToCenter = true;
+    connectToCenter(c) {
+        this._connectToCenter = c;
         return this;
     }
     traceShape(ctx) {
@@ -650,7 +833,7 @@ exports.ArcShape = ArcShape;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const PixelHitArea_1 = __webpack_require__(5);
-const TweenManager_1 = __webpack_require__(22);
+const TweenManager_1 = __webpack_require__(23);
 const Boundary_1 = __webpack_require__(17);
 const DEG_TO_ANGLE = 0.017453; // Math.PI / 180
 /**
@@ -685,6 +868,7 @@ class BaseShape {
         this._skewY = 0;
         this._isActive = true;
         this._isVisible = true;
+        this._originToCenter = false;
         this.tweenManager = new TweenManager_1.TweenManager();
         this.boundary = new Boundary_1.Boundary();
     }
@@ -694,13 +878,23 @@ class BaseShape {
     set y(v) { this._y = v; }
     get y() { return this._y; }
     set width(v) {
+        const h = this.height;
+        this.boundary.reset();
         this.boundary.setPoint([0, 0]);
-        this.boundary.setPoint([v, 0]);
+        this.boundary.setPoint([v, h]);
+        if (this._originToCenter) {
+            this.originToCenter = true;
+        }
     }
     get width() { return this.boundary.width; }
     set height(v) {
+        const w = this.width;
+        this.boundary.reset();
         this.boundary.setPoint([0, 0]);
-        this.boundary.setPoint([0, v]);
+        this.boundary.setPoint([w, v]);
+        if (this._originToCenter) {
+            this.originToCenter = true;
+        }
     }
     get height() { return this.boundary.height; }
     set originX(v) { this._originX = v; }
@@ -721,6 +915,13 @@ class BaseShape {
     get isActive() { return this._isActive; }
     set isVisible(v) { this._isVisible = v; }
     get isVisible() { return this._isVisible; }
+    set originToCenter(v) {
+        this._originToCenter = v;
+        if (v) {
+            [this.originX, this.originY] = this.boundary.center;
+        }
+    }
+    get originToCenter() { return this._originToCenter; }
     getBoundary() {
         return this.boundary.clone();
     }
@@ -728,7 +929,7 @@ class BaseShape {
     get contextTransform() { return Object.assign({}, this._currentCtxt); }
     origin(x, y, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["originX", "originY"], callback);
+            this.tweenManager.addTween(this, tween, duration, [x, y], ["originX", "originY"], callback, 4);
         }
         else {
             this.originX = x;
@@ -736,12 +937,9 @@ class BaseShape {
         }
         return this;
     }
-    originToCenter() {
-        return this.origin(this.width / 2, this.height / 2);
-    }
     resize(w, h = w, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [w, h], ["width", "height"], callback);
+            this.tweenManager.addTween(this, tween, duration, [w, h], ["width", "height"], callback, 5);
         }
         else {
             this.width = w;
@@ -760,7 +958,7 @@ class BaseShape {
     }
     scale(x, y = x, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["scaleX", "scaleY"], callback);
+            this.tweenManager.addTween(this, tween, duration, [x, y], ["scaleX", "scaleY"], callback, 20);
         }
         else {
             this.scaleX += x;
@@ -770,7 +968,7 @@ class BaseShape {
     }
     skew(x, y = x, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["skewX", "skewY"], callback);
+            this.tweenManager.addTween(this, tween, duration, [x, y], ["skewX", "skewY"], callback, 9);
         }
         else {
             this.skewX += x;
@@ -780,7 +978,7 @@ class BaseShape {
     }
     translate(x, y, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["x", "y"], callback);
+            this.tweenManager.addTween(this, tween, duration, [x, y], ["x", "y"], callback, 1);
         }
         else {
             this.x += x;
@@ -897,10 +1095,6 @@ class BezierCurveShape extends BaseStyle_1.BaseStyle {
     get type() { return interfaces_1.ShapeType.LINE; }
     get width() { return this._boundary.width; }
     get height() { return this._boundary.height; }
-    originToCenter() {
-        const [x, y] = this._boundary.center;
-        return this.origin(x, y);
-    }
     get numCurves() {
         return this._curves.length;
     }
@@ -910,6 +1104,9 @@ class BezierCurveShape extends BaseStyle_1.BaseStyle {
         this._boundary.setPoint(p1);
         this._boundary.setPoint(p2);
         this._boundary.setPoint([(p1[0] + cp1[0] + cp2[0] + p2[0]) / 4, (p1[0] + cp1[0] + cp2[0] + p2[0]) / 4]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
         return this;
     }
     clear() {
@@ -962,20 +1159,20 @@ class CircleShape extends BaseStyle_1.BaseStyle {
     get type() { return interfaces_1.ShapeType.SHAPE; }
     set width(v) { throw new ReferenceError(`LineShape width cannot be set (${v}).`); }
     set height(v) { throw new ReferenceError(`LineShape height cannot be set (${v}).`); }
-    originToCenter() {
-        return this.origin(0, 0);
-    }
     set radius(r) {
         this.boundary.reset();
         this.boundary.setPoint([-r, -r]);
         this.boundary.setPoint([r, r]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
     }
     get radius() {
         return super.width / 2;
     }
     withRadius(r, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback);
+            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback, 5);
         }
         else {
             this.radius = r;
@@ -1057,14 +1254,13 @@ class LineShape extends BaseStyle_1.BaseStyle {
     get type() { return interfaces_1.ShapeType.LINE; }
     set width(v) { throw new ReferenceError(`LineShape width cannot be set (${v}).`); }
     set height(v) { throw new ReferenceError(`LineShape height cannot be set (${v}).`); }
-    originToCenter() {
-        const [x, y] = this.boundary.center;
-        return this.origin(x, y);
-    }
     addLine(line) {
         this._linePoints.push(line);
         this.boundary.setPoint(line[0]);
         this.boundary.setPoint(line[1]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
         return this;
     }
     clear() {
@@ -1117,14 +1313,13 @@ class PolyShape extends BaseStyle_1.BaseStyle {
     get type() { return interfaces_1.ShapeType.SHAPE; }
     get width() { return this.boundary.width; }
     get height() { return this.boundary.height; }
-    originToCenter() {
-        const [x, y] = this.boundary.center;
-        return this.origin(x, y);
-    }
     addLine(line) {
         this._sidesCollection.push(line);
         this.boundary.setPoint(line[0]);
         this.boundary.setPoint(line[1]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
         return this;
     }
     addBezier(curve) {
@@ -1133,6 +1328,9 @@ class PolyShape extends BaseStyle_1.BaseStyle {
         this.boundary.setPoint(p1);
         this.boundary.setPoint(p2);
         this.boundary.setPoint([(p1[0] + cp1[0] + cp2[0] + p2[0]) / 4, (p1[0] + cp1[0] + cp2[0] + p2[0]) / 4]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
         return this;
     }
     addQuadratic(curve) {
@@ -1141,6 +1339,9 @@ class PolyShape extends BaseStyle_1.BaseStyle {
         this.boundary.setPoint(p1);
         this.boundary.setPoint(p2);
         this.boundary.setPoint([(p1[0] + cp1[0] + p2[0]) / 3, (p1[0] + cp1[0] + p2[0]) / 3]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
         return this;
     }
     clear() {
@@ -1214,6 +1415,9 @@ class QuadraticCurveShape extends BaseStyle_1.BaseStyle {
         this.boundary.setPoint(p1);
         this.boundary.setPoint(p2);
         this.boundary.setPoint([(p1[0] + cp1[0] + p2[0]) / 3, (p1[0] + cp1[0] + p2[0]) / 3]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
         return this;
     }
     clear() {
@@ -1701,17 +1905,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const platform_browser_1 = __webpack_require__(18);
-const common_1 = __webpack_require__(33);
-const ngvas_component_1 = __webpack_require__(32);
-const ngvas_arc_component_1 = __webpack_require__(23);
-const ngvas_bezier_component_1 = __webpack_require__(24);
-const ngvas_circle_component_1 = __webpack_require__(25);
-const ngvas_image_component_1 = __webpack_require__(26);
-const ngvas_line_component_1 = __webpack_require__(27);
-const ngvas_polygon_component_1 = __webpack_require__(28);
-const ngvas_quadratic_component_1 = __webpack_require__(29);
-const ngvas_rectange_component_1 = __webpack_require__(30);
-const ngvas_text_component_1 = __webpack_require__(31);
+const common_1 = __webpack_require__(34);
+const ngvas_component_1 = __webpack_require__(33);
+const ngvas_arc_component_1 = __webpack_require__(24);
+const ngvas_bezier_component_1 = __webpack_require__(25);
+const ngvas_circle_component_1 = __webpack_require__(26);
+const ngvas_image_component_1 = __webpack_require__(27);
+const ngvas_line_component_1 = __webpack_require__(28);
+const ngvas_polygon_component_1 = __webpack_require__(29);
+const ngvas_quadratic_component_1 = __webpack_require__(30);
+const ngvas_rectange_component_1 = __webpack_require__(31);
+const ngvas_text_component_1 = __webpack_require__(32);
 let NgvasModule = class NgvasModule {
 };
 NgvasModule = __decorate([
@@ -1862,13 +2066,6 @@ class StyleManager {
         this.ctxValues.fillStyle = undefinedOr(style, this.ctxValues.fillStyle);
         return this;
     }
-    withShadow(blur, color, offsetX, offsetY) {
-        this.ctxValues.shadowBlur = undefinedOr(blur, this.ctxValues.shadowBlur);
-        this.ctxValues.shadowColor = undefinedOr(color, this.ctxValues.shadowColor);
-        this.ctxValues.shadowOffsetX = undefinedOr(offsetX, this.ctxValues.shadowOffsetX);
-        this.ctxValues.shadowOffsetY = undefinedOr(offsetY, this.ctxValues.shadowOffsetY);
-        return this;
-    }
     withStroke(width, style, join, cap, dashOffset, miterLimit) {
         this.ctxValues.lineCap = undefinedOr(cap, this.ctxValues.lineCap);
         this.ctxValues.lineDashOffset = undefinedOr(dashOffset, this.ctxValues.lineDashOffset);
@@ -1876,6 +2073,13 @@ class StyleManager {
         this.ctxValues.lineWidth = undefinedOr(width, this.ctxValues.lineWidth);
         this.ctxValues.strokeStyle = undefinedOr(style, this.ctxValues.strokeStyle);
         this.ctxValues.miterLimit = undefinedOr(miterLimit, this.ctxValues.miterLimit);
+        return this;
+    }
+    withShadow(blur, color, offsetX, offsetY) {
+        this.ctxValues.shadowBlur = undefinedOr(blur, this.ctxValues.shadowBlur);
+        this.ctxValues.shadowColor = undefinedOr(color, this.ctxValues.shadowColor);
+        this.ctxValues.shadowOffsetX = undefinedOr(offsetX, this.ctxValues.shadowOffsetX);
+        this.ctxValues.shadowOffsetY = undefinedOr(offsetY, this.ctxValues.shadowOffsetY);
         return this;
     }
     withText() {
@@ -1915,42 +2119,113 @@ function undefinedOr(arg, ctxProp) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+function parseColorStyle(color) {
+    let rgbaColor;
+    if (typeof color === "string") {
+        color = color.trim();
+        if (color.indexOf("rgba(") === 0) {
+            rgbaColor = color.slice(5, -1).split(",").map(c => parseInt(c.trim(), 10));
+        }
+        else if (color.indexOf("rgb(") === 0) {
+            rgbaColor = color.slice(4, -1).split(",").map(c => parseInt(c.trim(), 10));
+            rgbaColor.push(1);
+        }
+        else if (color.indexOf("#") === 0 && color.length === 7) {
+            rgbaColor = [color.slice(1, 3), color.slice(3, 5), color.slice(5), "1"].map(c => +`0x${c}`);
+        }
+        else if (color.indexOf("#") === 0 && color.length === 9) {
+            rgbaColor = [color.slice(1, 3), color.slice(3, 5), color.slice(5), color.slice(6)].map(c => parseInt(c, 16));
+            rgbaColor[3] /= 255;
+        }
+        else if (color.indexOf("#") === 0) {
+            rgbaColor = [color.slice(1, 2), color.slice(2, 3), color.slice(3)].map(c => +`0x${c}${c}`);
+            rgbaColor.push(1);
+        }
+    }
+    else if (typeof color === "number") {
+        rgbaColor = [color >> 16, color >> 8 << 8, color, 1];
+        rgbaColor[2] = (rgbaColor[2] - rgbaColor[1]);
+        rgbaColor[1] = (rgbaColor[1] - (rgbaColor[0] << 16) - rgbaColor[2]) >> 8;
+    }
+    return rgbaColor;
+}
+exports.parseColorStyle = parseColorStyle;
+function toRgbaString(color) {
+    return `rgba(${color.join()})`;
+}
+exports.toRgbaString = toRgbaString;
+//# sourceMappingURL=color-style-parser.js.map
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 const easing_1 = __webpack_require__(16);
 class TweenManager {
     constructor() {
         this._collection = [];
     }
+    // private _preExecutor: Function[] = [];
+    // private _postExecutor: Function[] = [];
+    /**
+     * Execute tweens.
+     */
     tween() {
+        // this._preExecutor.forEach(e => e());
         this._collection = this._collection.filter(f => f());
+        // this._postExecutor.forEach(e => e());
     }
     clear() {
         this._collection = [];
+        // this._preExecutor = [];
+        // this._postExecutor = [];
     }
-    addTween(shape, tween, duration, toValues, paramKeys, callback) {
+    // public addPreExecutor (f: Function) {
+    //     this._preExecutor.push(f);
+    // }
+    // public addPostExecutor (f: Function) {
+    //     this._postExecutor.push(f);
+    // }
+    addTween(target, tween, duration, toValues, paramKeys, callback, priority = 10, preFunc, postFunc) {
         const start = Date.now();
         const end = Date.now() + duration;
-        const startValues = paramKeys.map(k => shape[k]);
+        const startValues = paramKeys.map(k => target[k]);
         tween = tween || easing_1.easeLinear;
-        this._collection.push(function () {
+        const func = function () {
             const now = Date.now();
+            if (preFunc !== undefined) {
+                preFunc();
+            }
             if (now >= end) {
-                paramKeys.forEach(function (k, i) { shape[k] = toValues[i]; });
+                paramKeys.forEach(function (k, i) { target[k] = toValues[i]; });
+                if (postFunc !== undefined) {
+                    postFunc(toValues);
+                }
                 if (callback !== undefined) {
-                    callback(shape);
+                    callback(target);
                 }
                 return false;
             }
             const results = startValues.map((v, i) => tween(now - start, v, toValues[i] - v, duration));
-            paramKeys.forEach(function (p, i) { shape[p] = results[i]; });
+            paramKeys.forEach(function (p, i) { target[p] = results[i]; });
+            if (postFunc !== undefined) {
+                postFunc(results);
+            }
             return true;
-        });
+        };
+        func["$priority"] = priority;
+        this._collection.push(func);
+        this._collection.sort((a, b) => a.$priority - b.$priority);
     }
 }
 exports.TweenManager = TweenManager;
 //# sourceMappingURL=TweenManager.js.map
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1972,37 +2247,41 @@ let NgvasArcComponent = NgvasArcComponent_1 = class NgvasArcComponent extends ba
     constructor() {
         super(ArcShape_1.ArcShape);
     }
-    set radius(r) { this.execOrDelay((s) => s.radius = r); }
-    ;
-    set angle(deg) { this.execOrDelay((s) => s.angle = deg); }
-    ;
-    set radier(v) {
-        this.execOrDelay((s) => s.withRadius(v[0], v[1], v[2]));
+    set connectToCenter(c) {
+        this.execOrDelay((s) => s.connectToCenter(c));
     }
-    set angler(v) {
-        this.execOrDelay((s) => s.withAngle(v[0], v[1], v[2]));
+    set radius(v) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s) => s.withRadius(v[0], v[1], v[2], v[3]));
+        }
+        else {
+            this.execOrDelay((s) => s.withRadius(v));
+        }
+    }
+    set angle(v) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s) => s.withAngle(v[0], v[1], v[2], v[3]));
+        }
+        else {
+            this.execOrDelay((s) => s.withAngle(v));
+        }
     }
 };
 __decorate([
+    core_1.Input("connectToCenter"),
+    __metadata("design:type", Boolean),
+    __metadata("design:paramtypes", [Boolean])
+], NgvasArcComponent.prototype, "connectToCenter", null);
+__decorate([
     core_1.Input("radius"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
 ], NgvasArcComponent.prototype, "radius", null);
 __decorate([
     core_1.Input("angle"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
 ], NgvasArcComponent.prototype, "angle", null);
-__decorate([
-    core_1.Input("radier"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasArcComponent.prototype, "radier", null);
-__decorate([
-    core_1.Input("angler"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasArcComponent.prototype, "angler", null);
 NgvasArcComponent = NgvasArcComponent_1 = __decorate([
     core_1.Component({
         // moduleId: String(module.id),
@@ -2017,7 +2296,7 @@ var NgvasArcComponent_1;
 //# sourceMappingURL=ngvas-arc.component.js.map
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2061,7 +2340,7 @@ var NgvasBezierCurveComponent_1;
 //# sourceMappingURL=ngvas-bezier.component.js.map
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2083,22 +2362,20 @@ let NgvasCircleComponent = NgvasCircleComponent_1 = class NgvasCircleComponent e
     constructor() {
         super(CircleShape_1.CircleShape);
     }
-    set radius(r) { this.execOrDelay((s) => s.radius = r); }
-    ;
-    set radier(v) {
-        this.execOrDelay((s) => s.withRadius(v[0], v[1], v[2]));
+    set radius(v) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s) => s.withRadius(v[0], v[1], v[2], v[3]));
+        }
+        else {
+            this.execOrDelay((s) => s.withRadius(v));
+        }
     }
 };
 __decorate([
     core_1.Input("radius"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
+    __metadata("design:type", Object),
+    __metadata("design:paramtypes", [Object])
 ], NgvasCircleComponent.prototype, "radius", null);
-__decorate([
-    core_1.Input("radier"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasCircleComponent.prototype, "radier", null);
 NgvasCircleComponent = NgvasCircleComponent_1 = __decorate([
     core_1.Component({
         // moduleId: String(module.id),
@@ -2113,7 +2390,7 @@ var NgvasCircleComponent_1;
 //# sourceMappingURL=ngvas-circle.component.js.map
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2157,7 +2434,7 @@ var NgvasImageComponent_1;
 //# sourceMappingURL=ngvas-image.component.js.map
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2201,7 +2478,7 @@ var NgvasLineComponent_1;
 //# sourceMappingURL=ngvas-line.component.js.map
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2260,7 +2537,7 @@ var NgvasPolygonComponent_1;
 //# sourceMappingURL=ngvas-polygon.component.js.map
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2304,7 +2581,7 @@ var NgvasQuadraticCurveComponent_1;
 //# sourceMappingURL=ngvas-quadratic.component.js.map
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2341,7 +2618,7 @@ var NgvasRectangleComponent_1;
 //# sourceMappingURL=ngvas-rectange.component.js.map
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2394,7 +2671,7 @@ var NgvasTextComponent_1;
 //# sourceMappingURL=ngvas-text.component.js.map
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2508,13 +2785,13 @@ exports.NgvasComponent = NgvasComponent;
 //# sourceMappingURL=ngvas.component.js.map
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_33__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_34__;
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2536,29 +2813,29 @@ const RectShape_1 = __webpack_require__(14);
 const TextShape_1 = __webpack_require__(15);
 var ngvas_module_1 = __webpack_require__(19);
 exports.NgvasModule = ngvas_module_1.NgvasModule;
-var library;
-(function (library) {
-    var hitAreas;
-    (function (hitAreas) {
-        hitAreas.PixelHitArea = PixelHitArea_1.PixelHitArea;
-    })(hitAreas = library.hitAreas || (library.hitAreas = {}));
-    var tweens;
-    (function (tweens) {
-        tweens.easings = _tweenEasings;
-    })(tweens = library.tweens || (library.tweens = {}));
-    library.BaseShape = BaseShape_1.BaseShape;
-    library.BaseStyle = BaseStyle_1.BaseStyle;
-    library.CanvasGroup = CanvasGroup_1.CanvasGroup;
-    library.ArcShape = ArcShape_1.ArcShape;
-    library.BezierCurveShape = BezierCurveShape_1.BezierCurveShape;
-    library.CircleShape = CircleShape_1.CircleShape;
-    library.ImageShape = ImageShape_1.ImageShape;
-    library.LineShape = LineShape_1.LineShape;
-    library.PolyShape = PolyShape_1.PolyShape;
-    library.QuadraticCurveShape = QuadraticCurveShape_1.QuadraticCurveShape;
-    library.RectShape = RectShape_1.RectShape;
-    library.TextShape = TextShape_1.TextShape;
-})(library = exports.library || (exports.library = {}));
+var hitAreas;
+(function (hitAreas) {
+    hitAreas.PixelHitArea = PixelHitArea_1.PixelHitArea;
+})(hitAreas = exports.hitAreas || (exports.hitAreas = {}));
+var tweens;
+(function (tweens) {
+    tweens.easings = _tweenEasings;
+})(tweens = exports.tweens || (exports.tweens = {}));
+var shapes;
+(function (shapes) {
+    shapes.BaseShape = BaseShape_1.BaseShape;
+    shapes.BaseStyle = BaseStyle_1.BaseStyle;
+    shapes.CanvasGroup = CanvasGroup_1.CanvasGroup;
+    shapes.ArcShape = ArcShape_1.ArcShape;
+    shapes.BezierCurveShape = BezierCurveShape_1.BezierCurveShape;
+    shapes.CircleShape = CircleShape_1.CircleShape;
+    shapes.ImageShape = ImageShape_1.ImageShape;
+    shapes.LineShape = LineShape_1.LineShape;
+    shapes.PolyShape = PolyShape_1.PolyShape;
+    shapes.QuadraticCurveShape = QuadraticCurveShape_1.QuadraticCurveShape;
+    shapes.RectShape = RectShape_1.RectShape;
+    shapes.TextShape = TextShape_1.TextShape;
+})(shapes = exports.shapes || (exports.shapes = {}));
 //# sourceMappingURL=index.js.map
 
 /***/ })

@@ -24,7 +24,10 @@ import { TextShape as _TextShape }                     from "./canvas/shapes/Tex
 
 export { NgvasModule } from "./ngvas.module";
 
-export namespace library {
+import { TweenInput as _TweenInput } from "./components/interfaces";
+
+
+export namespace types {
     export type Point = _shapes.Point;
     export type Line = _shapes.Line;
     export type QuadraticCurve = _shapes.QuadraticCurve;
@@ -38,16 +41,20 @@ export namespace library {
     export type TextAlign = _styles.TextAlign;
     export type TextBaseline = _styles.TextBaseline;
 
-    export namespace hitAreas {
-        export type IHitAres = _hitAreas.IHitArea;
-        export const PixelHitArea = _PixelHitArea;
-    }
+    export type TweenInput<S extends _BaseStyle, V> = _TweenInput<S, V>;
+}
 
-    export namespace tweens {
-        export type TweenFunc = _TF;
-        export const easings = _tweenEasings;
-    }
+export namespace hitAreas {
+    export type IHitAres = _hitAreas.IHitArea;
+    export const PixelHitArea = _PixelHitArea;
+}
 
+export namespace tweens {
+    export type TweenFunc = _TF;
+    export const easings = _tweenEasings;
+}
+
+export namespace shapes {
     export const BaseShape = _BaseShape;
     export const BaseStyle = _BaseStyle;
     export const CanvasGroup = _CanvasGroup;

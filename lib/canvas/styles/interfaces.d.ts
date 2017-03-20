@@ -3,7 +3,7 @@ import { IShape } from "../shapes/interfaces";
  * Style Interfaces
  */
 export declare type ComposeOverlay = "source-over" | "source-in" | "source-out" | "source-atop" | "destination-over" | "destination-in" | "destination-out" | "destination-atop" | "lighter" | "copy" | "xor" | "multiply" | "screen" | "overlay" | "darken" | "lighten" | "color-dodge" | "color-burn" | "hard-light" | "soft-light" | "difference" | "exclusion" | "hue" | "saturation" | "color" | "luminosity";
-export declare type ColorStyle = string | CanvasGradient | CanvasPattern;
+export declare type ColorStyle = number | string | CanvasGradient | CanvasPattern;
 export declare type LineJoin = "miter" | "bevel" | "round";
 export declare type LineCap = "butt" | "round" | "square";
 export declare type TextAlign = "left" | "right" | "center" | "start" | "end";

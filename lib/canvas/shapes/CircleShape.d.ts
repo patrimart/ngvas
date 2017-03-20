@@ -9,7 +9,6 @@ export declare class CircleShape extends BaseStyle {
     readonly type: ShapeType;
     width: number;
     height: number;
-    originToCenter(): this;
     radius: number;
     withRadius(r: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     traceShape(ctx: CanvasRenderingContext2D): void;

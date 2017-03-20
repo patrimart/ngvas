@@ -4,8 +4,8 @@ import {
 } from "@angular/core";
 
 import { CircleShape }        from "../canvas/shapes/CircleShape";
-import { TweenFunc }          from "../canvas/tweens/interfaces";
 import { NgvasBaseComponent } from "./base.component";
+import { TweenInput }         from "./interfaces";
 
 
 @Component({
@@ -21,11 +21,13 @@ export class NgvasCircleComponent extends NgvasBaseComponent<CircleShape> {
         super(CircleShape);
     }
 
-    @Input("radius")
-    public set radius (r: number) { this.execOrDelay((s: CircleShape) => s.radius = r); };
 
-    @Input("radier")
-    public set radier (v: [number, number | undefined, TweenFunc | undefined]) {
-        this.execOrDelay((s: CircleShape) => s.withRadius(v[0], v[1], v[2]));
+    @Input("radius")
+    public set radius (v: TweenInput<CircleShape, number>) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s: CircleShape) => s.withRadius(v[0], v[1], v[2], v[3]));
+        } else {
+            this.execOrDelay((s: CircleShape) => s.withRadius(v));
+        }
     }
 }

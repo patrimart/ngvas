@@ -3,6 +3,18 @@
 
 DO NOT USE. Not production ready yet.
 
+Example Angular Module:
+```js
+import { NgvasModule, tweens } from "ngvas";
+
+@NgModule({
+  imports:      [ BrowserModule, NgvasModule ],
+  declarations: [ AppComponent ],
+  bootstrap:    [ AppComponent ]
+})
+class AppModule { }
+```
+
 Example HTML with Ngvas components:
 
 ```html
@@ -19,7 +31,7 @@ Example HTML with Ngvas components:
 ### Types
 
 ```js
-import * as types from "angvas";
+import * as types from "ngvas";
 ```
 
 ```js
@@ -77,7 +89,7 @@ type TextBaseline = "top" | "hanging" | "middle" | "alphabetic" | "ideographic" 
   - `@Input("text") (t: string)`
 
 
-All Ngvas components inherited the following interface.
+All Ngvas components inherit the following interface.
 
 
 ### @Inputs

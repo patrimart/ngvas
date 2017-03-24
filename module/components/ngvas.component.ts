@@ -1,14 +1,12 @@
 
 import {
     Component, Inject, ElementRef, AfterContentInit, OnDestroy,
-    ContentChildren, QueryList, Input, Output, EventEmitter,
+    ContentChildren, QueryList, Input, Output, EventEmitter, ViewChild, Renderer,
 } from "@angular/core";
-import { DOCUMENT } from "@angular/platform-browser";
 
 import { Subscription } from "rxjs/Subscription";
 
 import { CanvasGroup }        from "../canvas/CanvasGroup";
-import { BaseShape }          from "../canvas/shapes/BaseShape";
 import { BaseStyle }          from "../canvas/styles/BaseStyle";
 import { NgvasBaseComponent } from "./base.component";
 
@@ -16,10 +14,13 @@ import { NgvasBaseComponent } from "./base.component";
 @Component({
     // moduleId: String(module.id),
     selector: "ngvas",
-    template: "<ng-content></ng-content>",
+    template: "<ng-content></ng-content><canvas #ngvasCanvas></canvas>",
     styles: [ ":not(canvas) { display: none; }" ],
 })
 export class NgvasComponent implements AfterContentInit, OnDestroy {
+
+    @ViewChild("ngvasCanvas")
+    public canvasRef: ElementRef;
 
     @ContentChildren(NgvasBaseComponent)
     public contentChildren: QueryList<NgvasBaseComponent<BaseStyle>>;
@@ -28,14 +29,17 @@ export class NgvasComponent implements AfterContentInit, OnDestroy {
     private _width = 0;
     private _height = 0;
     private _isActive = true;
-    private _shape = new EventEmitter<BaseShape>();
 
     private _contentSubscription: Subscription;
 
+    @Output("ready")
+    public ready = new EventEmitter<NgvasComponent>();
+
+
     public constructor(
-        @Inject(DOCUMENT) private document: Document,
-        @Inject(ElementRef) private elRef: ElementRef,
+        @Inject(Renderer) private renderer: Renderer,
     ) {}
+
 
     @Input("width")
     public set width (w: number) {
@@ -52,11 +56,6 @@ export class NgvasComponent implements AfterContentInit, OnDestroy {
         this._isActive = a;
     }
 
-    @Output("shape")
-    public get shape () {
-         return this._shape;
-    }
-
 
     public getShape (): CanvasGroup {
         return this._canvasGroup;
@@ -67,20 +66,19 @@ export class NgvasComponent implements AfterContentInit, OnDestroy {
      */
     public ngAfterContentInit (): void {
 
-        const canvas = this.document.createElement("canvas");
-        canvas.width = this._width;
-        canvas.height = this._height;
-        this.elRef.nativeElement.appendChild(canvas);
+        const canvas = this.canvasRef.nativeElement;
+        this.renderer.setElementAttribute(canvas, "width", String(this._width));
+        this.renderer.setElementAttribute(canvas, "height", String(this._height));
 
         this._canvasGroup = new CanvasGroup(canvas, undefined, this._isActive);
-        this.contentChildren.forEach(c => this._canvasGroup.addChild(c.initShape(this._canvasGroup.context)));
+        this.contentChildren.forEach(c => this._canvasGroup.addChild(c.initShape(canvas, this._canvasGroup.context)));
 
-        this.shape.emit(this._canvasGroup);
+        this.ready.emit(this);
 
         this._contentSubscription = this.contentChildren.changes
             .subscribe(c => {
                 this._canvasGroup.removeAllChildren();
-                c.forEach((c2: NgvasBaseComponent<BaseStyle>) => this._canvasGroup.addChild(c2.initShape(this._canvasGroup.context)));
+                c.forEach((c2: NgvasBaseComponent<BaseStyle>) => this._canvasGroup.addChild(c2.initShape(canvas, this._canvasGroup.context)));
             });
     }
 

@@ -20,6 +20,10 @@ export declare abstract class NgvasBaseComponent<S extends BaseStyle> {
     width: number;
     height: number;
     rotation: number;
+    scaleX: number;
+    scaleY: number;
+    skewX: number;
+    skewY: number;
     scale: TweenInput<S, [number, number]>;
     size: TweenInput<S, [number, number]>;
     skew: TweenInput<S, [number, number]>;
@@ -48,11 +52,15 @@ export declare abstract class NgvasBaseComponent<S extends BaseStyle> {
         offsetX: number;
         offsetY: number;
     }>;
-    click: any;
-    clickEvent: EventEmitter<S>;
     shapeOut: EventEmitter<S>;
-    constructor(Clazz: BaseStyleConstructor<S>);
+    clickEvent: EventEmitter<MouseEvent>;
+    mouseenterEvent: EventEmitter<MouseEvent>;
+    mouseleaveEvent: EventEmitter<MouseEvent>;
+    /**
+     * Base constructor for the base component.
+     */
+    protected constructor(Clazz: BaseStyleConstructor<S>);
     getShape(): S | undefined;
-    initShape(ctx: CanvasRenderingContext2D): S;
+    initShape(origCanvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): S;
     protected execOrDelay(f: (s: S) => void): void;
 }

@@ -1,6 +1,6 @@
 {
   "name": "ngvas",
-  "version": "0.6.1",
+  "version": "0.7.1",
   "description": "HTML Canvas components for Angular2.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -24,16 +24,16 @@
   "author": "Patrick Martin",
   "license": "MIT",
   "devDependencies": {
-    "@angular/common": "2.4.9",
-    "@angular/compiler": "2.4.9",
-    "@angular/compiler-cli": "2.4.9",
-    "@angular/core": "2.4.9",
-    "@angular/forms": "2.4.9",
-    "@angular/http": "2.4.9",
-    "@angular/platform-browser": "2.4.9",
-    "@angular/platform-browser-dynamic": "2.4.9",
-    "@angular/router": "3.4.9",
-    "@types/jasmine": "2.5.45",
+    "@angular/common": "2.4.10",
+    "@angular/compiler": "2.4.10",
+    "@angular/compiler-cli": "2.4.10",
+    "@angular/core": "2.4.10",
+    "@angular/forms": "2.4.10",
+    "@angular/http": "2.4.10",
+    "@angular/platform-browser": "2.4.10",
+    "@angular/platform-browser-dynamic": "2.4.10",
+    "@angular/router": "3.4.10",
+    "@types/jasmine": "2.5.46",
     "@types/node": "7.0.8",
     "concurrently": "3.4.0",
     "core-js": "2.4.1",
@@ -44,7 +44,7 @@
     "tslint": "4.5.1",
     "typescript": "2.2.1",
     "webpack": "^2.2.1",
-    "zone.js": "0.8.0"
+    "zone.js": "0.8.4"
   },
   "repository" : {
     "type": "git",

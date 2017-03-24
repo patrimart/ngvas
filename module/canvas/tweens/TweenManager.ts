@@ -38,7 +38,7 @@ export class TweenManager {
 
 
     public addTween (
-        target: BaseShape,
+        target: any,
         tween: TweenFunc,
         duration: number,
         toValues: number[],

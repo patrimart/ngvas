@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("@angular/core"), require("@angular/platform-browser"), require("@angular/common"));
+		module.exports = factory(require("@angular/core"), require("@angular/common"), require("@angular/platform-browser"));
 	else if(typeof define === 'function' && define.amd)
-		define(["@angular/core", "@angular/platform-browser", "@angular/common"], factory);
+		define(["@angular/core", "@angular/common", "@angular/platform-browser"], factory);
 	else if(typeof exports === 'object')
-		exports["ngvas"] = factory(require("@angular/core"), require("@angular/platform-browser"), require("@angular/common"));
+		exports["ngvas"] = factory(require("@angular/core"), require("@angular/common"), require("@angular/platform-browser"));
 	else
-		root["ngvas"] = factory(root["@angular/core"], root["@angular/platform-browser"], root["@angular/common"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_18__, __WEBPACK_EXTERNAL_MODULE_34__) {
+		root["ngvas"] = factory(root["@angular/core"], root["@angular/common"], root["@angular/platform-browser"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_34__, __WEBPACK_EXTERNAL_MODULE_35__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 35);
+/******/ 	return __webpack_require__(__webpack_require__.s = 36);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,16 +91,15 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 Object.defineProperty(exports, "__esModule", { value: true });
 const BaseShape_1 = __webpack_require__(7);
 const StyleManager_1 = __webpack_require__(21);
-const color_style_parser_1 = __webpack_require__(22);
+const color_style_parser_1 = __webpack_require__(18);
+const StyleTweenHelper_1 = __webpack_require__(22);
 /**
  * Draws a filled and/or stroked rectangle.
  */
 class BaseStyle extends BaseShape_1.BaseShape {
     constructor(canvas, ctx, name) {
         super(canvas, ctx, name);
-        this._fillColorRGBA = [0, 0, 0, 1];
-        this._strokeColorRGBA = [0, 0, 0, 1];
-        this._shadowColorRGBA = [0, 0, 0, 1];
+        this._styleTweenHelper = new StyleTweenHelper_1.StyleTweenHelper();
         this.styleManager = new StyleManager_1.StyleManager(this.ctx);
     }
     set isVisible(v) {
@@ -123,11 +122,13 @@ class BaseStyle extends BaseShape_1.BaseShape {
         if (duration > 1) {
             const vals = color_style_parser_1.parseColorStyle(style);
             const props = ["fillColorR", "fillColorG", "fillColorB", "fillColorA"];
-            this.tweenManager.addTween(this, tween, duration, vals, props, callback);
+            this.tweenManager.addTween(this._styleTweenHelper, tween, duration, vals, props, callback);
         }
         else {
             style = typeof style === "number" ? `#${style.toString(16)}` : style;
-            this.fillColorRGBA = color_style_parser_1.parseColorStyle(style);
+            if (typeof style === "string") {
+                this._styleTweenHelper.fillColorRGBA = style;
+            }
             this.styleManager.withFill(style);
         }
         return this;
@@ -136,13 +137,17 @@ class BaseStyle extends BaseShape_1.BaseShape {
         if (typeof args[2] === "number" && args[2] > 1) {
             const vals = [args[0] | 0, ...color_style_parser_1.parseColorStyle(args[1])];
             const props = ["strokeWidth", "strokeColorR", "strokeColorG", "strokeColorB", "strokeColorA"];
-            this.tweenManager.addTween(this, args[3], args[2], vals, props, args[4]);
+            this.tweenManager.addTween(this._styleTweenHelper, args[3], args[2], vals, props, args[4]);
         }
         else {
             let [width, style, join, cap, dashOffset, miterLimit] = args;
-            style = typeof style === "number" ? `#${style.toString(16)}` : style;
-            this.strokeColorRGBA = color_style_parser_1.parseColorStyle(style);
-            this.styleManager.withStroke(width, style, join, cap, dashOffset, miterLimit);
+            if (width !== undefined) {
+                this._styleTweenHelper.strokeWidth = width;
+            }
+            if (style !== undefined) {
+                this._styleTweenHelper.strokeColorRGBA = style;
+            }
+            this.styleManager.withStroke(undefined, undefined, join, cap, dashOffset, miterLimit);
         }
         return this;
     }
@@ -150,12 +155,14 @@ class BaseStyle extends BaseShape_1.BaseShape {
         if (duration > 1) {
             const vals = [blur, ...color_style_parser_1.parseColorStyle(color), offsetX, offsetY];
             const props = ["shadowBlur", "shadowColorR", "shadowColorG", "shadowColorB", "shadowColorA", "shadowOffsetX", "shadowOffsetY"];
-            this.tweenManager.addTween(this, tween, duration, vals, props, callback);
+            this.tweenManager.addTween(this._styleTweenHelper, tween, duration, vals, props, callback);
         }
         else {
             color = typeof color === "number" ? `#${color.toString(16)}` : color;
-            this.shadowColorRGBA = color_style_parser_1.parseColorStyle(color);
-            this.styleManager.withShadow(blur, color, offsetX, offsetY);
+            this._styleTweenHelper.shadowBlur = blur;
+            this._styleTweenHelper.shadowColorRGBA = color;
+            this._styleTweenHelper.shadowOffsetX = offsetX;
+            this._styleTweenHelper.shadowOffsetY = offsetY;
         }
         return this;
     }
@@ -165,6 +172,7 @@ class BaseStyle extends BaseShape_1.BaseShape {
     }
     draw(ctxt) {
         this.styleManager.begin();
+        this._styleTweenHelper.draw(this.styleManager);
         super.draw(ctxt);
         this.styleManager.end();
     }
@@ -173,103 +181,6 @@ class BaseStyle extends BaseShape_1.BaseShape {
         this.styleManager.clear();
         super.isVisible = true;
         return this;
-    }
-    /////////////////////////////////////////////
-    // TWEEN HELPERS
-    set fillColorRGBA(rgba) {
-        this._fillColorRGBA = rgba;
-    }
-    get fillColorRGBA() {
-        return this._fillColorRGBA;
-    }
-    set fillColorR(r) {
-        this._fillColorRGBA[0] = r | 0;
-    }
-    get fillColorR() {
-        return this._fillColorRGBA[0];
-    }
-    set fillColorG(g) {
-        this._fillColorRGBA[1] = g | 0;
-    }
-    get fillColorG() {
-        return this._fillColorRGBA[1];
-    }
-    set fillColorB(b) {
-        this._fillColorRGBA[2] = b | 0;
-    }
-    get fillColorB() {
-        return this._fillColorRGBA[2];
-    }
-    set fillColorA(a) {
-        this._fillColorRGBA[3] = a;
-        this.styleManager.withFill(color_style_parser_1.toRgbaString(this._fillColorRGBA));
-    }
-    get fillColorA() {
-        return this._fillColorRGBA[3];
-    }
-    set strokeColorRGBA(rgba) {
-        this._strokeColorRGBA = rgba;
-        console.log(this._strokeColorRGBA);
-    }
-    get strokeColorRGBA() {
-        return this._strokeColorRGBA;
-    }
-    set strokeColorR(r) {
-        this._strokeColorRGBA[0] = r | 0;
-    }
-    get strokeColorR() {
-        return this._strokeColorRGBA[0];
-    }
-    set strokeColorG(g) {
-        this._strokeColorRGBA[1] = g | 0;
-    }
-    get strokeColorG() {
-        return this._strokeColorRGBA[1];
-    }
-    set strokeColorB(b) {
-        this._strokeColorRGBA[2] = b | 0;
-    }
-    get strokeColorB() {
-        return this._strokeColorRGBA[2];
-    }
-    set strokeColorA(a) {
-        this._strokeColorRGBA[3] = a;
-        this.styleManager.withFill(color_style_parser_1.toRgbaString(this._strokeColorRGBA));
-    }
-    get strokeColorA() {
-        return this._strokeColorRGBA[3];
-    }
-    set shadowColorRGBA(rgba) {
-        this._shadowColorRGBA = rgba;
-        console.log(this._shadowColorRGBA);
-    }
-    get shadowColorRGBA() {
-        return this._shadowColorRGBA;
-    }
-    set shadowColorR(r) {
-        this._shadowColorRGBA[0] = r | 0;
-    }
-    get shadowColorR() {
-        return this._shadowColorRGBA[0];
-    }
-    set shadowColorG(g) {
-        this._shadowColorRGBA[1] = g | 0;
-    }
-    get shadowColorG() {
-        return this._shadowColorRGBA[1];
-    }
-    set shadowColorB(b) {
-        this._shadowColorRGBA[2] = b | 0;
-    }
-    get shadowColorB() {
-        return this._shadowColorRGBA[2];
-    }
-    set shadowColorA(a) {
-        this._shadowColorRGBA[3] = a;
-        this.styleManager.withFill(color_style_parser_1.toRgbaString(this._shadowColorRGBA));
-    }
-    get shadowColorA() {
-        return this._shadowColorRGBA[3];
     }
 }
 exports.BaseStyle = BaseStyle;
@@ -314,11 +225,18 @@ const core_1 = __webpack_require__(0);
  * The base class for all shape components.
  */
 class NgvasBaseComponent {
+    /**
+     * Base constructor for the base component.
+     */
     constructor(Clazz) {
         this.Clazz = Clazz;
         this._delayedSetters = [];
-        this.clickEvent = new core_1.EventEmitter();
         this.shapeOut = new core_1.EventEmitter();
+        /////////////////////////////////////////////
+        // MOUSE EVENTS
+        this.clickEvent = new core_1.EventEmitter();
+        this.mouseenterEvent = new core_1.EventEmitter();
+        this.mouseleaveEvent = new core_1.EventEmitter();
     }
     set active(a) { this.execOrDelay(s => s.isActive = a); }
     ;
@@ -334,8 +252,9 @@ class NgvasBaseComponent {
         }
         else {
             this.execOrDelay(s => {
-                s.originX = xy[0];
-                s.originY = xy[1];
+                s.originToCenter = false;
+                s.originX = xy[0] || 0;
+                s.originY = xy[1] || 0;
             });
         }
     }
@@ -345,6 +264,14 @@ class NgvasBaseComponent {
     set height(h) { this.execOrDelay(s => s.height = h); }
     ;
     set rotation(r) { this.execOrDelay(s => s.rotation = r); }
+    ;
+    set scaleX(x) { this.execOrDelay(s => s.scaleX = x); }
+    ;
+    set scaleY(y) { this.execOrDelay(s => s.scaleY = y); }
+    ;
+    set skewX(x) { this.execOrDelay(s => s.skewX = x); }
+    ;
+    set skewY(y) { this.execOrDelay(s => s.skewY = y); }
     ;
     /////////////////////////////////////////////
     // TWEENER INPUTS
@@ -383,7 +310,7 @@ class NgvasBaseComponent {
             const r = v;
             this.execOrDelay(s => s.rotate(r));
         }
-        else if (Array.isArray(v[0])) {
+        else if (typeof v[0] === "number") {
             const [r, duration, tween, callback] = v;
             this.execOrDelay(s => s.rotate(r, duration, tween, callback));
         }
@@ -438,7 +365,7 @@ class NgvasBaseComponent {
     set stroke(st) {
         if (Array.isArray(st)) {
             this.execOrDelay(s => {
-                s.withStroke(st[0].width, st[0].style, st[0].join, st[0].cap, st[0].dashOffset);
+                s.withStroke(undefined, undefined, st[0].join, st[0].cap, st[0].dashOffset);
                 s.withStroke(st[0].width, st[0].style, st[1], st[2], st[3]);
             });
         }
@@ -454,19 +381,32 @@ class NgvasBaseComponent {
             this.execOrDelay(s => s.withShadow(sh.blur, sh.color, sh.offsetX, sh.offsetY));
         }
     }
-    set click(listener) {
-        if (listener !== undefined) {
-            this.execOrDelay(shape => shape.addEventListener("click", s => { this.clickEvent.emit(s); }));
-        }
-    }
     getShape() {
         return this._shape;
     }
-    initShape(ctx) {
+    initShape(origCanvas, ctx) {
         if (this._shape !== undefined) {
             return this._shape;
         }
-        this._shape = new this.Clazz(ctx.canvas, ctx, this.name);
+        this._shape = new this.Clazz(origCanvas, ctx, this.name);
+        if (this.clickEvent.observers.length > 0) {
+            this._shape.addEventListener("click", e => { this.clickEvent.emit(e); });
+        }
+        if (this.mouseenterEvent.observers.length > 0) {
+            this._shape.addEventListener("mouseenter", e => { this.mouseenterEvent.emit(e); });
+        }
+        if (this.mouseleaveEvent.observers.length > 0) {
+            this._shape.addEventListener("mouseleave", e => { this.mouseleaveEvent.emit(e); });
+        }
+        // TODO Wrap this._shape in a Proxy to emit Outputs.
+        // this._shape = new Proxy(this._shape, {
+        //     set: function (oTarget: any, sKey: any, vValue: any) {
+        //         // console.log("onChange in proxy", sKey, vValue);
+        //         if (sKey in oTarget === false) { return false; }
+        //         oTarget[sKey] = vValue;
+        //         return true;
+        //     }
+        // });
         this._delayedSetters.forEach(f => f(this._shape));
         this._delayedSetters = [];
         this.shapeOut.emit(this._shape);
@@ -520,6 +460,26 @@ __decorate([
     __metadata("design:type", Number),
     __metadata("design:paramtypes", [Number])
 ], NgvasBaseComponent.prototype, "rotation", null);
+__decorate([
+    core_1.Input("scaleX"),
+    __metadata("design:type", Number),
+    __metadata("design:paramtypes", [Number])
+], NgvasBaseComponent.prototype, "scaleX", null);
+__decorate([
+    core_1.Input("scaleY"),
+    __metadata("design:type", Number),
+    __metadata("design:paramtypes", [Number])
+], NgvasBaseComponent.prototype, "scaleY", null);
+__decorate([
+    core_1.Input("skewX"),
+    __metadata("design:type", Number),
+    __metadata("design:paramtypes", [Number])
+], NgvasBaseComponent.prototype, "skewX", null);
+__decorate([
+    core_1.Input("skewY"),
+    __metadata("design:type", Number),
+    __metadata("design:paramtypes", [Number])
+], NgvasBaseComponent.prototype, "skewY", null);
 __decorate([
     core_1.Input("scale"),
     __metadata("design:type", Object),
@@ -586,18 +546,21 @@ __decorate([
     __metadata("design:paramtypes", [Object])
 ], NgvasBaseComponent.prototype, "shadow", null);
 __decorate([
-    core_1.Input("click"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "click", null);
+    core_1.Output("shape"),
+    __metadata("design:type", Object)
+], NgvasBaseComponent.prototype, "shapeOut", void 0);
 __decorate([
     core_1.Output("click"),
     __metadata("design:type", Object)
 ], NgvasBaseComponent.prototype, "clickEvent", void 0);
 __decorate([
-    core_1.Output("shape"),
+    core_1.Output("mouseenter"),
     __metadata("design:type", Object)
-], NgvasBaseComponent.prototype, "shapeOut", void 0);
+], NgvasBaseComponent.prototype, "mouseenterEvent", void 0);
+__decorate([
+    core_1.Output("mouseleave"),
+    __metadata("design:type", Object)
+], NgvasBaseComponent.prototype, "mouseleaveEvent", void 0);
 exports.NgvasBaseComponent = NgvasBaseComponent;
 //# sourceMappingURL=base.component.js.map
 
@@ -851,6 +814,7 @@ class BaseShape {
         this.ctx = ctx;
         this._name = _name;
         this._constraints = [];
+        this._eventHandlers = {};
         this._currentCtxt = {
             scaleX: 0, scaleY: 0,
             skewX: 0, skewY: 0,
@@ -949,7 +913,7 @@ class BaseShape {
     }
     rotate(deg, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [deg], ["rotation"], callback);
+            this.tweenManager.addTween(this, tween, duration, [this.rotation + deg], ["rotation"], callback);
         }
         else {
             this.rotation += deg;
@@ -958,17 +922,17 @@ class BaseShape {
     }
     scale(x, y = x, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["scaleX", "scaleY"], callback, 20);
+            this.tweenManager.addTween(this, tween, duration, [this.scaleX * x, this.scaleY * y], ["scaleX", "scaleY"], callback, 20);
         }
         else {
-            this.scaleX += x;
-            this.scaleY += y;
+            this.scaleX *= x;
+            this.scaleY *= y;
         }
         return this;
     }
     skew(x, y = x, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["skewX", "skewY"], callback, 9);
+            this.tweenManager.addTween(this, tween, duration, [this.skewX + x, this.skewY + y], ["skewX", "skewY"], callback, 9);
         }
         else {
             this.skewX += x;
@@ -978,7 +942,7 @@ class BaseShape {
     }
     translate(x, y, duration = 0, tween, callback) {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["x", "y"], callback, 1);
+            this.tweenManager.addTween(this, tween, duration, [this.x + x, this.y + y], ["x", "y"], callback, 1);
         }
         else {
             this.x += x;
@@ -1055,12 +1019,50 @@ class BaseShape {
         return this;
     }
     addEventListener(event, listener) {
+        this.removeEventListener(event);
         const rect = this.canvas.getBoundingClientRect();
-        this.canvas.addEventListener(event, (evt) => {
-            if (this._hitArea !== undefined && this.isVisible && this.isHit(evt.clientX - rect.left, evt.clientY - rect.top)) {
-                listener(this, event, evt);
+        if (event === "click") {
+            this.canvas.addEventListener("click", this._eventHandlers.click = (evt) => {
+                const clientX = evt.clientX - rect.left, clientY = evt.clientY - rect.top;
+                if (this.isVisible && this.isHit(clientX, clientY)) {
+                    listener(new MouseEvent("click", Object.assign({}, evt, { clientX, clientY, relatedTarget: null })));
+                }
+            }, false);
+        }
+        else if (event === "mouseenter" || event === "mouseleave") {
+            this._eventHandlers[event] = (evt) => listener(evt);
+            if ("mousemove" in this._eventHandlers === false) {
+                let isOver = false;
+                this.canvas.addEventListener("mousemove", this._eventHandlers.mousemove = (evt) => {
+                    const clientX = evt.clientX - rect.left, clientY = evt.clientY - rect.top;
+                    const isHit = this.isVisible && this.isHit(clientX, clientY);
+                    if (isOver && !isHit) {
+                        this.canvas.style.cursor = "default";
+                        isOver = false;
+                        if ("mouseleave" in this._eventHandlers) {
+                            this._eventHandlers.mouseleave(evt);
+                        }
+                    }
+                    else if (!isOver && isHit) {
+                        this.canvas.style.cursor = "pointer";
+                        isOver = true;
+                        if ("mouseenter" in this._eventHandlers) {
+                            this._eventHandlers.mouseenter(evt);
+                        }
+                    }
+                }, false);
             }
-        }, false);
+        }
+    }
+    removeEventListener(event) {
+        if (event in this._eventHandlers) {
+            this.canvas.removeEventListener(event, this._eventHandlers[event]);
+            delete this._eventHandlers[event];
+        }
+        if ("mousemove" in this._eventHandlers && "mouseenter" in this._eventHandlers === false && "mouseleave" in this._eventHandlers === false) {
+            this.canvas.removeEventListener("mousemove", this._eventHandlers.mousemove);
+            delete this._eventHandlers.mousemove;
+        }
     }
     clear() {
         this._originX = 0;
@@ -1886,9 +1888,53 @@ exports.Boundary = Boundary;
 
 /***/ }),
 /* 18 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_18__;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function parseColorStyle(color) {
+    let rgbaColor;
+    if (typeof color === "string") {
+        color = color.trim();
+        if (color.indexOf("rgba(") === 0) {
+            rgbaColor = color.slice(5, -1).split(",").map(c => parseInt(c.trim(), 10));
+        }
+        else if (color.indexOf("rgb(") === 0) {
+            rgbaColor = color.slice(4, -1).split(",").map(c => parseInt(c.trim(), 10));
+            rgbaColor.push(1);
+        }
+        else if (color.indexOf("#") === 0 && color.length === 7) {
+            rgbaColor = [color.slice(1, 3), color.slice(3, 5), color.slice(5), "1"].map(c => +`0x${c}`);
+        }
+        else if (color.indexOf("#") === 0 && color.length === 9) {
+            rgbaColor = [color.slice(1, 3), color.slice(3, 5), color.slice(5), color.slice(6)].map(c => parseInt(c, 16));
+            rgbaColor[3] /= 255;
+        }
+        else if (color.indexOf("#") === 0) {
+            rgbaColor = [color.slice(1, 2), color.slice(2, 3), color.slice(3)].map(c => +`0x${c}${c}`);
+            rgbaColor.push(1);
+        }
+        else {
+            throw new ReferenceError(`The ngvas library does not understand the style "${color}".`);
+        }
+    }
+    else if (typeof color === "number") {
+        rgbaColor = [color >> 16, color >> 8 << 8, color, 1];
+        rgbaColor[2] = (rgbaColor[2] - rgbaColor[1]);
+        rgbaColor[1] = (rgbaColor[1] - (rgbaColor[0] << 16) - rgbaColor[2]) >> 8;
+    }
+    else {
+        throw new ReferenceError(`The ngvas library does not understand the style "${color}".`);
+    }
+    return rgbaColor;
+}
+exports.parseColorStyle = parseColorStyle;
+function toRgbaString(color) {
+    return `rgba(${color.join()})`;
+}
+exports.toRgbaString = toRgbaString;
+//# sourceMappingURL=color-style-parser.js.map
 
 /***/ }),
 /* 19 */
@@ -1904,7 +1950,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
-const platform_browser_1 = __webpack_require__(18);
+const platform_browser_1 = __webpack_require__(35);
 const common_1 = __webpack_require__(34);
 const ngvas_component_1 = __webpack_require__(33);
 const ngvas_arc_component_1 = __webpack_require__(24);
@@ -2119,42 +2165,177 @@ function undefinedOr(arg, ctxProp) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function parseColorStyle(color) {
-    let rgbaColor;
-    if (typeof color === "string") {
-        color = color.trim();
-        if (color.indexOf("rgba(") === 0) {
-            rgbaColor = color.slice(5, -1).split(",").map(c => parseInt(c.trim(), 10));
-        }
-        else if (color.indexOf("rgb(") === 0) {
-            rgbaColor = color.slice(4, -1).split(",").map(c => parseInt(c.trim(), 10));
-            rgbaColor.push(1);
-        }
-        else if (color.indexOf("#") === 0 && color.length === 7) {
-            rgbaColor = [color.slice(1, 3), color.slice(3, 5), color.slice(5), "1"].map(c => +`0x${c}`);
-        }
-        else if (color.indexOf("#") === 0 && color.length === 9) {
-            rgbaColor = [color.slice(1, 3), color.slice(3, 5), color.slice(5), color.slice(6)].map(c => parseInt(c, 16));
-            rgbaColor[3] /= 255;
-        }
-        else if (color.indexOf("#") === 0) {
-            rgbaColor = [color.slice(1, 2), color.slice(2, 3), color.slice(3)].map(c => +`0x${c}${c}`);
-            rgbaColor.push(1);
-        }
+const color_style_parser_1 = __webpack_require__(18);
+/**
+ * Class for StyleTweenHelper.
+ */
+class StyleTweenHelper {
+    constructor() {
+        this._isFillDirty = false;
+        this._fillColorRGBA = [0, 0, 0, 1];
+        this._isStrokeDirty = false;
+        this._strokeWidth = 0;
+        this._strokeColorRGBA = [0, 0, 0, 1];
+        this._isShadowDirty = false;
+        this._shadowBlur = 0;
+        this._shadowOffset = [0, 0];
+        this._shadowColorRGBA = [0, 0, 0, 1];
     }
-    else if (typeof color === "number") {
-        rgbaColor = [color >> 16, color >> 8 << 8, color, 1];
-        rgbaColor[2] = (rgbaColor[2] - rgbaColor[1]);
-        rgbaColor[1] = (rgbaColor[1] - (rgbaColor[0] << 16) - rgbaColor[2]) >> 8;
+    draw(styleManager) {
+        if (this._isFillDirty) {
+            styleManager.withFill(color_style_parser_1.toRgbaString(this._fillColorRGBA));
+        }
+        if (this._isStrokeDirty) {
+            styleManager.withStroke(this._strokeWidth, color_style_parser_1.toRgbaString(this._strokeColorRGBA));
+        }
+        if (this._isShadowDirty) {
+            styleManager.withShadow(this._shadowBlur, color_style_parser_1.toRgbaString(this._shadowColorRGBA), this._shadowOffset[0], this._shadowOffset[1]);
+        }
+        this._isFillDirty = false;
+        this._isStrokeDirty = false;
+        this._isShadowDirty = false;
     }
-    return rgbaColor;
+    // "fillColorR", "fillColorG", "fillColorB", "fillColorA"
+    set fillColorRGBA(rgba) {
+        this._fillColorRGBA = color_style_parser_1.parseColorStyle(rgba);
+        this._isFillDirty = true;
+    }
+    get fillColorRGBA() {
+        return color_style_parser_1.toRgbaString(this._fillColorRGBA);
+    }
+    set fillColorR(r) {
+        this._fillColorRGBA[0] = r | 0;
+        this._isFillDirty = true;
+    }
+    get fillColorR() {
+        return this._fillColorRGBA[0];
+    }
+    set fillColorG(g) {
+        this._fillColorRGBA[1] = g | 0;
+        this._isFillDirty = true;
+    }
+    get fillColorG() {
+        return this._fillColorRGBA[1];
+    }
+    set fillColorB(b) {
+        this._fillColorRGBA[2] = b | 0;
+        this._isFillDirty = true;
+    }
+    get fillColorB() {
+        return this._fillColorRGBA[2];
+    }
+    set fillColorA(a) {
+        this._fillColorRGBA[3] = a;
+        this._isFillDirty = true;
+        // this.styleManager.withFill(toRgbaString(this._fillColorRGBA));
+    }
+    get fillColorA() {
+        return this._fillColorRGBA[3];
+    }
+    // "strokeWidth", "strokeColorR", "strokeColorG", "strokeColorB", "strokeColorA"
+    set strokeWidth(w) {
+        this._strokeWidth = w;
+        this._isStrokeDirty = true;
+    }
+    get strokeWidth() {
+        return this._strokeWidth;
+    }
+    set strokeColorRGBA(rgba) {
+        this._strokeColorRGBA = color_style_parser_1.parseColorStyle(rgba);
+        this._isStrokeDirty = true;
+    }
+    get strokeColorRGBA() {
+        return color_style_parser_1.toRgbaString(this._strokeColorRGBA);
+    }
+    set strokeColorR(r) {
+        this._strokeColorRGBA[0] = r | 0;
+        this._isStrokeDirty = true;
+    }
+    get strokeColorR() {
+        return this._strokeColorRGBA[0];
+    }
+    set strokeColorG(g) {
+        this._strokeColorRGBA[1] = g | 0;
+        this._isStrokeDirty = true;
+    }
+    get strokeColorG() {
+        return this._strokeColorRGBA[1];
+    }
+    set strokeColorB(b) {
+        this._strokeColorRGBA[2] = b | 0;
+        this._isStrokeDirty = true;
+    }
+    get strokeColorB() {
+        return this._strokeColorRGBA[2];
+    }
+    set strokeColorA(a) {
+        this._strokeColorRGBA[3] = a;
+        this._isStrokeDirty = true;
+        // this.styleManager.withStroke(this._strokeWidth, toRgbaString(this._strokeColorRGBA));
+    }
+    get strokeColorA() {
+        return this._strokeColorRGBA[3];
+    }
+    // "shadowBlur", "shadowColorR", "shadowColorG", "shadowColorB", "shadowColorA", "shadowOffsetX", "shadowOffsetY"
+    set shadowBlur(b) {
+        this._shadowBlur = Math.max(0, b);
+        this._isShadowDirty = true;
+    }
+    get shadowBlur() {
+        return this._shadowBlur;
+    }
+    set shadowOffsetX(x) {
+        this._shadowOffset[0] = x;
+        this._isShadowDirty = true;
+    }
+    get shadowOffsetX() {
+        return this._shadowOffset[0];
+    }
+    set shadowOffsetY(y) {
+        this._shadowOffset[1] = y;
+        this._isShadowDirty = true;
+    }
+    get shadowOffsetY() {
+        return this._shadowOffset[1];
+    }
+    set shadowColorRGBA(rgba) {
+        this._shadowColorRGBA = color_style_parser_1.parseColorStyle(rgba);
+        this._isShadowDirty = true;
+    }
+    get shadowColorRGBA() {
+        return color_style_parser_1.toRgbaString(this._shadowColorRGBA);
+    }
+    set shadowColorR(r) {
+        this._shadowColorRGBA[0] = r | 0;
+        this._isShadowDirty = true;
+    }
+    get shadowColorR() {
+        return this._shadowColorRGBA[0];
+    }
+    set shadowColorG(g) {
+        this._shadowColorRGBA[1] = g | 0;
+        this._isShadowDirty = true;
+    }
+    get shadowColorG() {
+        return this._shadowColorRGBA[1];
+    }
+    set shadowColorB(b) {
+        this._shadowColorRGBA[2] = b | 0;
+        this._isShadowDirty = true;
+    }
+    get shadowColorB() {
+        return this._shadowColorRGBA[2];
+    }
+    set shadowColorA(a) {
+        this._shadowColorRGBA[3] = a;
+        this._isShadowDirty = true;
+    }
+    get shadowColorA() {
+        return this._shadowColorRGBA[3];
+    }
 }
-exports.parseColorStyle = parseColorStyle;
-function toRgbaString(color) {
-    return `rgba(${color.join()})`;
-}
-exports.toRgbaString = toRgbaString;
-//# sourceMappingURL=color-style-parser.js.map
+exports.StyleTweenHelper = StyleTweenHelper;
+//# sourceMappingURL=StyleTweenHelper.js.map
 
 /***/ }),
 /* 23 */
@@ -2690,17 +2871,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
-const platform_browser_1 = __webpack_require__(18);
 const CanvasGroup_1 = __webpack_require__(4);
 const base_component_1 = __webpack_require__(3);
 let NgvasComponent = class NgvasComponent {
-    constructor(document, elRef) {
-        this.document = document;
-        this.elRef = elRef;
+    constructor(renderer) {
+        this.renderer = renderer;
         this._width = 0;
         this._height = 0;
         this._isActive = true;
-        this._shape = new core_1.EventEmitter();
+        this.ready = new core_1.EventEmitter();
     }
     set width(w) {
         this._width = +w;
@@ -2711,9 +2890,6 @@ let NgvasComponent = class NgvasComponent {
     set active(a) {
         this._isActive = a;
     }
-    get shape() {
-        return this._shape;
-    }
     getShape() {
         return this._canvasGroup;
     }
@@ -2721,17 +2897,16 @@ let NgvasComponent = class NgvasComponent {
      * Fires once after ng-content is intitialized.
      */
     ngAfterContentInit() {
-        const canvas = this.document.createElement("canvas");
-        canvas.width = this._width;
-        canvas.height = this._height;
-        this.elRef.nativeElement.appendChild(canvas);
+        const canvas = this.canvasRef.nativeElement;
+        this.renderer.setElementAttribute(canvas, "width", String(this._width));
+        this.renderer.setElementAttribute(canvas, "height", String(this._height));
         this._canvasGroup = new CanvasGroup_1.CanvasGroup(canvas, undefined, this._isActive);
-        this.contentChildren.forEach(c => this._canvasGroup.addChild(c.initShape(this._canvasGroup.context)));
-        this.shape.emit(this._canvasGroup);
+        this.contentChildren.forEach(c => this._canvasGroup.addChild(c.initShape(canvas, this._canvasGroup.context)));
+        this.ready.emit(this);
         this._contentSubscription = this.contentChildren.changes
             .subscribe(c => {
             this._canvasGroup.removeAllChildren();
-            c.forEach((c2) => this._canvasGroup.addChild(c2.initShape(this._canvasGroup.context)));
+            c.forEach((c2) => this._canvasGroup.addChild(c2.initShape(canvas, this._canvasGroup.context)));
         });
     }
     /**
@@ -2746,9 +2921,17 @@ let NgvasComponent = class NgvasComponent {
     }
 };
 __decorate([
+    core_1.ViewChild("ngvasCanvas"),
+    __metadata("design:type", core_1.ElementRef)
+], NgvasComponent.prototype, "canvasRef", void 0);
+__decorate([
     core_1.ContentChildren(base_component_1.NgvasBaseComponent),
     __metadata("design:type", core_1.QueryList)
 ], NgvasComponent.prototype, "contentChildren", void 0);
+__decorate([
+    core_1.Output("ready"),
+    __metadata("design:type", Object)
+], NgvasComponent.prototype, "ready", void 0);
 __decorate([
     core_1.Input("width"),
     __metadata("design:type", Number),
@@ -2764,22 +2947,15 @@ __decorate([
     __metadata("design:type", Boolean),
     __metadata("design:paramtypes", [Boolean])
 ], NgvasComponent.prototype, "active", null);
-__decorate([
-    core_1.Output("shape"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [])
-], NgvasComponent.prototype, "shape", null);
 NgvasComponent = __decorate([
     core_1.Component({
         // moduleId: String(module.id),
         selector: "ngvas",
-        template: "<ng-content></ng-content>",
+        template: "<ng-content></ng-content><canvas #ngvasCanvas></canvas>",
         styles: [":not(canvas) { display: none; }"],
     }),
-    __param(0, core_1.Inject(platform_browser_1.DOCUMENT)),
-    __param(1, core_1.Inject(core_1.ElementRef)),
-    __metadata("design:paramtypes", [Document,
-        core_1.ElementRef])
+    __param(0, core_1.Inject(core_1.Renderer)),
+    __metadata("design:paramtypes", [core_1.Renderer])
 ], NgvasComponent);
 exports.NgvasComponent = NgvasComponent;
 //# sourceMappingURL=ngvas.component.js.map
@@ -2792,6 +2968,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_34__;
 
 /***/ }),
 /* 35 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_35__;
+
+/***/ }),
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -1,46 +1,65 @@
 
-
-import { NgModule, Component, AfterViewInit }    from "@angular/core";
+import { NgModule, Component }    from "@angular/core";
 import { BrowserModule }          from "@angular/platform-browser";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 
-import { NgvasModule, tweens } from "ngvas";
+import { NgvasModule, tweens, hitAreas } from "ngvas";
 
 
 @Component({
   selector: "ngvas-app",
   template: `
     <h1>Ngvas App Demo</h1>
-    <ngvas [width]="500" [height]="500">
-      <ngvas-circle [fill]="fill" [translate]="xy" [radius]="radius" [rotate]="rotate" origin="center"></ngvas-circle>
+    <ngvas [width]="500" [height]="500" (ready)="tweenComplete()">
+      <!--ngvas-rectangle [fill]="fill" [translate]="xy" [size]="size" [rotate]="rotate" origin="center"></ngvas-rectangle>
+      <ngvas-circle [stroke]="stroke" [translate]="xy" [radius]="50" origin="center"></ngvas-circle>
+      <ngvas-rectangle [fill]="squareFill" [translate]="squareTranslate" [size]="[100, 100]" origin="center" [hitArea]="pixelHitArea"
+        (click)="onClick($event)" (mouseenter)="onMouseEnter($event)" (mouseleave)="onMouseLeave($event)"></ngvas-rectangle-->
+      <ngvas-circle fill="#ff0000" [x]="250" [y]="250" [radius]="100" origin="center"></ngvas-circle>
     </ngvas>
   `,
 })
-class AppComponent implements AfterViewInit {
+class AppComponent {
 
-  private _step   = 0;
-  private _radius = [ 20, 80, 20, 80 ];
-  private _xy     = [ [100, 100], [400, 100], [400, 400], [100, 400] ];
-  private _fill   = [ 0xff0000, 0xffff00, 0x00ff00, 0x0000ff ];
+  private i     = 0;
+  private _size = [ 20, 80, 20, 80 ];
+  private _xy   = [ [0, -300], [300, 0], [0, 300], [-300, 0] ];
+  private _fill = [ 0xff0000, 0xffff00, 0x00ff00, 0x0000ff ];
 
-  public radius: any = this._radius[0];
+  public size: any   = [this._size[0], this._size[0]];
   public rotate: any = 0;
-  public xy: any     = this._xy[0];
+  public xy: any     = [ 100, 100 ];
   public fill: any   = this._fill[0];
+  public stroke: any = { width: this._size[0] / 4, style: this._fill[this.i] };
 
-  public ngAfterViewInit () {
-    this.tweenComplete();
-  }
+  public squareFill = 0x666666;
+  public squareTranslate = [250, 250];
+
+  public pixelHitArea = hitAreas.PixelHitArea;
+
 
   public tweenComplete () {
     // Prevents Angular Error: "Expression has changed after it was checked."
     setTimeout(() => {
-      if (++this._step > 3) { this._step = 0; }
-      this.radius = [ this._radius[this._step]    , 1000, tweens.easings.easeInOutSine, () => this.tweenComplete() ];
-      this.rotate = [ this._radius[this._step] * 5, 1000, tweens.easings.easeInOutSine ];
-      this.xy     = [ this._xy[this._step]        , 1000, tweens.easings.easeInOutSine ];
-      this.fill   = [ this._fill[this._step]      , 1000, tweens.easings.easeInOutSine ];
+      if (++this.i > 3) { this.i = 0; }
+      this.rotate = [ this._size[this.i] * 5, 1000, tweens.easings.easeInOutSine, () => this.tweenComplete() ];
+      this.size   = [ [this._size[this.i], this._size[this.i]], 1000, tweens.easings.easeInOutSine ];
+      this.xy     = [ this._xy[this.i], 1000, tweens.easings.easeInOutSine ];
+      this.fill   = [ this._fill[this.i], 1000, tweens.easings.easeInOutSine ];
+      this.stroke = [ { width: this._size[this.i] / 4, style: this._fill[this.i] }, 1000, tweens.easings.easeInOutSine];
     });
+  }
+
+  public onClick (e: MouseEvent): void {
+    this.squareTranslate = [[0, -100], 500, tweens.easings.easeOutCircular, () => this.squareTranslate = [[0, 100], 800, tweens.easings.easeOutBounce]];
+  }
+
+  public onMouseEnter (e: MouseEvent): void {
+    this.squareFill = 0x009900;
+  }
+
+  public onMouseLeave (e: MouseEvent): void {
+    this.squareFill = 0x666666;
   }
 }
 
@@ -48,7 +67,7 @@ class AppComponent implements AfterViewInit {
 @NgModule({
   imports:      [ BrowserModule, NgvasModule ],
   declarations: [ AppComponent ],
-  bootstrap:    [ AppComponent ]
+  bootstrap:    [ AppComponent ],
 })
 class AppModule { }
 

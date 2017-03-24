@@ -28,6 +28,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     private _hitArea: IHitArea;
     private _constraints: ConstraintFunction[] = [];
+    private _eventHandlers: { [name: string]: (evt: MouseEvent) => void } = {};
 
     private _currentCtxt: ContextTransformer = {
         scaleX : 0, scaleY : 0,
@@ -159,7 +160,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     public rotate (deg: number, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [deg], ["rotation"], callback);
+            this.tweenManager.addTween(this, tween, duration, [this.rotation + deg], ["rotation"], callback);
         } else {
             this.rotation += deg;
         }
@@ -168,17 +169,17 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     public scale (x: number, y = x, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["scaleX", "scaleY"], callback, 20);
+            this.tweenManager.addTween(this, tween, duration, [this.scaleX * x, this.scaleY * y], ["scaleX", "scaleY"], callback, 20);
         } else {
-            this.scaleX += x;
-            this.scaleY += y;
+            this.scaleX *= x;
+            this.scaleY *= y;
         }
         return this;
     }
 
     public skew (x: number, y = x, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["skewX", "skewY"], callback, 9);
+            this.tweenManager.addTween(this, tween, duration, [this.skewX + x, this.skewY + y], ["skewX", "skewY"], callback, 9);
         } else {
             this.skewX += x;
             this.skewY += y;
@@ -188,7 +189,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
     public translate (x: number, y: number, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
         if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [x, y], ["x", "y"], callback, 1);
+            this.tweenManager.addTween(this, tween, duration, [this.x + x, this.y + y], ["x", "y"], callback, 1);
         } else {
             this.x += x;
             this.y += y;
@@ -208,6 +209,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
         }
 
         if (this.isVisible) {
+
             this._currentCtxt.scaleX = ctxt.scaleX * this.scaleX;
             this._currentCtxt.scaleY = ctxt.scaleY * this.scaleY;
             this._currentCtxt.skewX = ctxt.skewX + this.skewX;
@@ -292,16 +294,60 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
     }
 
 
-    public addEventListener (event: string, listener: (s: this, t?: string, e?: MouseEvent) => void): void {
+    public addEventListener (event: string, listener: (e: MouseEvent) => void): void {
+
+        this.removeEventListener(event);
 
         const rect = this.canvas.getBoundingClientRect();
-        this.canvas.addEventListener(event, (evt: MouseEvent) => {
 
-            if (this._hitArea !== undefined && this.isVisible &&  this.isHit(evt.clientX - rect.left, evt.clientY - rect.top)) {
-                listener(this, event, evt);
+        if (event === "click") {
+
+            this.canvas.addEventListener("click", this._eventHandlers.click = (evt: MouseEvent) => {
+                const clientX = evt.clientX - rect.left,
+                      clientY = evt.clientY - rect.top;
+                if (this.isVisible && this.isHit(clientX, clientY)) {
+                    listener(new MouseEvent("click", Object.assign({}, evt, { clientX, clientY, relatedTarget: null })));
+                }
+            }, false);
+
+        } else if (event === "mouseenter" || event === "mouseleave") {
+
+            this._eventHandlers[event] = (evt: MouseEvent) => listener(evt);
+
+            if ("mousemove" in this._eventHandlers === false) {
+
+                let isOver = false;
+                this.canvas.addEventListener("mousemove", this._eventHandlers.mousemove = (evt: MouseEvent) => {
+                    const clientX = evt.clientX - rect.left,
+                          clientY = evt.clientY - rect.top;
+                    const isHit = this.isVisible &&  this.isHit(clientX, clientY);
+                    if (isOver && ! isHit) {
+                        this.canvas.style.cursor = "default";
+                        isOver = false;
+                        if ("mouseleave" in this._eventHandlers) { this._eventHandlers.mouseleave(evt); }
+                    } else if (! isOver && isHit) {
+                        this.canvas.style.cursor = "pointer";
+                        isOver = true;
+                        if ("mouseenter" in this._eventHandlers) { this._eventHandlers.mouseenter(evt); }
+                    }
+
+                }, false);
             }
+        }
+    }
 
-        }, false);
+
+    public removeEventListener (event: string): void {
+
+        if (event in this._eventHandlers) {
+            this.canvas.removeEventListener(event, this._eventHandlers[event]);
+            delete this._eventHandlers[event];
+        }
+
+        if ("mousemove" in this._eventHandlers && "mouseenter" in this._eventHandlers === false && "mouseleave" in this._eventHandlers === false) {
+            this.canvas.removeEventListener("mousemove", this._eventHandlers.mousemove);
+            delete this._eventHandlers.mousemove;
+        }
     }
 
 
@@ -312,4 +358,5 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
         this.boundary.reset();
         return this;
     }
+
 }

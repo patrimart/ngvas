@@ -25,6 +25,8 @@ export function parseColorStyle (color: ColorStyle | number): RGBAColor {
         } else if (color.indexOf("#") === 0) {
             rgbaColor = [ color.slice(1, 2), color.slice(2, 3), color.slice(3) ].map(c => +`0x${c}${c}`);
             rgbaColor.push(1);
+        } else {
+            throw new ReferenceError(`The ngvas library does not understand the style "${color}".`);
         }
 
     } else if (typeof color === "number") {
@@ -32,6 +34,8 @@ export function parseColorStyle (color: ColorStyle | number): RGBAColor {
         rgbaColor = [ color >> 16, color >> 8 << 8, color,  1 ];
         rgbaColor[2] = (rgbaColor[2] - rgbaColor[1]);
         rgbaColor[1] = (rgbaColor[1] - (rgbaColor[0] << 16) - rgbaColor[2]) >> 8;
+    } else {
+        throw new ReferenceError(`The ngvas library does not understand the style "${color}".`);
     }
 
     return rgbaColor as RGBAColor;

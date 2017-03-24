@@ -15,7 +15,6 @@ import { NgvasBaseComponent } from "./base.component";
 })
 export class NgvasRectangleComponent extends NgvasBaseComponent<RectShape> {
 
-
     public constructor() {
         super(RectShape);
     }

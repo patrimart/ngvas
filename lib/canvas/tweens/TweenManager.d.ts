@@ -7,5 +7,5 @@ export declare class TweenManager {
      */
     tween(): void;
     clear(): void;
-    addTween(target: BaseShape, tween: TweenFunc, duration: number, toValues: number[], paramKeys: string[], callback?: (target: BaseShape) => void, priority?: number, preFunc?: Function, postFunc?: (vals: number[]) => void): void;
+    addTween(target: any, tween: TweenFunc, duration: number, toValues: number[], paramKeys: string[], callback?: (target: BaseShape) => void, priority?: number, preFunc?: Function, postFunc?: (vals: number[]) => void): void;
 }

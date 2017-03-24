@@ -11,33 +11,16 @@ export declare type BaseStyleConstructor<T> = {
  */
 export declare abstract class BaseStyle extends BaseShape implements IComposeStyle, IFillStyle, IStrokeStyle {
     protected styleManager: StyleManager;
-    private _fillColorRGBA;
-    private _strokeColorRGBA;
-    private _shadowColorRGBA;
+    private _styleTweenHelper;
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, name?: string);
     isVisible: boolean;
     opacity: number;
     compose(alpha?: number, overlay?: ComposeOverlay): this;
     withFill(style?: ColorStyle, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
-    withStroke(width?: number, style?: ColorStyle, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
-    withStroke(width?: number, style?: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number): this;
+    withStroke(width: number, style: ColorStyle, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
+    withStroke(width: number, style: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number): this;
     withShadow(blur: number, color: string | number, offsetX: number, offsetY: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     textStyle(font?: string, align?: TextAlign, baseline?: TextBaseline): this;
     draw(ctxt: ContextTransformer): void;
     clear(): this;
-    private fillColorRGBA;
-    private fillColorR;
-    private fillColorG;
-    private fillColorB;
-    private fillColorA;
-    private strokeColorRGBA;
-    private strokeColorR;
-    private strokeColorG;
-    private strokeColorB;
-    private strokeColorA;
-    private shadowColorRGBA;
-    private shadowColorR;
-    private shadowColorG;
-    private shadowColorB;
-    private shadowColorA;
 }

@@ -38,8 +38,9 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
             this.execOrDelay(s => s.originToCenter = true);
         } else {
             this.execOrDelay(s => {
-                s.originX = xy[0];
-                s.originY = xy[1];
+                s.originToCenter = false;
+                s.originX = xy[0] || 0;
+                s.originY = xy[1] || 0;
             });
         }
     };
@@ -52,6 +53,18 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
 
     @Input("rotation")
     public set rotation (r: number) { this.execOrDelay(s => s.rotation = r); };
+
+    @Input("scaleX")
+    public set scaleX (x: number) { this.execOrDelay(s => s.scaleX = x); };
+
+    @Input("scaleY")
+    public set scaleY (y: number) { this.execOrDelay(s => s.scaleY = y); };
+
+    @Input("skewX")
+    public set skewX (x: number) { this.execOrDelay(s => s.skewX = x); };
+
+    @Input("skewY")
+    public set skewY (y: number) { this.execOrDelay(s => s.skewY = y); };
 
 
     /////////////////////////////////////////////
@@ -99,7 +112,7 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
         if (typeof v === "number") {
             const r = v as number;
             this.execOrDelay(s => s.rotate(r));
-        } else if (Array.isArray(v[0])) {
+        } else if (typeof v[0] === "number") {
             const [ r, duration, tween, callback ] = v as any;
             this.execOrDelay(s => s.rotate(r, duration, tween, callback));
         }
@@ -171,7 +184,7 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
     public set stroke (st: TweenInput<S, { width: number, style: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number }>) {
         if (Array.isArray(st)) {
             this.execOrDelay(s => {
-                s.withStroke(st[0].width, st[0].style, st[0].join, st[0].cap, st[0].dashOffset);
+                s.withStroke(undefined, undefined, st[0].join, st[0].cap, st[0].dashOffset);
                 s.withStroke(st[0].width, st[0].style, st[1], st[2], st[3]);
             });
         } else {
@@ -188,21 +201,27 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
         }
     }
 
-    @Input("click")
-    public set click (listener: any) {
-        if (listener !== undefined) {
-            this.execOrDelay(shape => shape.addEventListener("click", s => { this.clickEvent.emit(s); }));
-        }
-    }
-    @Output("click")
-    public clickEvent = new EventEmitter<S>();
-
-
     @Output("shape")
     public shapeOut = new EventEmitter<S>();
 
 
-    public constructor (
+    /////////////////////////////////////////////
+    // MOUSE EVENTS
+
+    @Output("click")
+    public clickEvent = new EventEmitter<MouseEvent>();
+
+    @Output("mouseenter")
+    public mouseenterEvent = new EventEmitter<MouseEvent>();
+
+    @Output("mouseleave")
+    public mouseleaveEvent = new EventEmitter<MouseEvent>();
+
+
+    /**
+     * Base constructor for the base component.
+     */
+    protected constructor (
         private Clazz: BaseStyleConstructor<S>,
     ) {}
 
@@ -212,13 +231,33 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
     }
 
 
-    public initShape(ctx: CanvasRenderingContext2D): S {
+    public initShape(origCanvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): S {
 
         if (this._shape !== undefined) {
             return this._shape;
         }
 
-        this._shape = new this.Clazz(ctx.canvas, ctx, this.name);
+        this._shape = new this.Clazz(origCanvas, ctx, this.name);
+
+        if (this.clickEvent.observers.length > 0) {
+            this._shape.addEventListener("click", e => { this.clickEvent.emit(e); });
+        }
+        if (this.mouseenterEvent.observers.length > 0) {
+            this._shape.addEventListener("mouseenter", e => { this.mouseenterEvent.emit(e); });
+        }
+        if (this.mouseleaveEvent.observers.length > 0) {
+            this._shape.addEventListener("mouseleave", e => { this.mouseleaveEvent.emit(e); });
+        }
+
+        // TODO Wrap this._shape in a Proxy to emit Outputs.
+        // this._shape = new Proxy(this._shape, {
+        //     set: function (oTarget: any, sKey: any, vValue: any) {
+        //         // console.log("onChange in proxy", sKey, vValue);
+        //         if (sKey in oTarget === false) { return false; }
+        //         oTarget[sKey] = vValue;
+        //         return true;
+        //     }
+        // });
 
         this._delayedSetters.forEach(f => f(this._shape));
         this._delayedSetters = [];

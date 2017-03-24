@@ -25,6 +25,7 @@ export declare abstract class BaseShape implements IShape, ITraceable, IConstrai
     private _aniFunc;
     private _hitArea;
     private _constraints;
+    private _eventHandlers;
     private _currentCtxt;
     private _x;
     private _y;
@@ -77,6 +78,7 @@ export declare abstract class BaseShape implements IShape, ITraceable, IConstrai
     withConstraint(...func: ConstraintFunction[]): this;
     withHitArea<H extends IHitArea>(Clazz: typeof PixelHitArea): this;
     withHitArea<H extends IHitArea>(Clazz: HitAreaConstructor<H>, offset?: number): this;
-    addEventListener(event: string, listener: (s: this, t?: string, e?: MouseEvent) => void): void;
+    addEventListener(event: string, listener: (e: MouseEvent) => void): void;
+    removeEventListener(event: string): void;
     clear(): this;
 }

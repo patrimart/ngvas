@@ -1,6 +1,6 @@
 {
   "name": "ngvas",
-  "version": "0.7.1",
+  "version": "0.7.3",
   "description": "HTML Canvas components for Angular2.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -17,6 +17,7 @@
   "keywords": [
     "angular",
     "angular2",
+    "angular4",
     "canvas",
     "html",
     "painter"
@@ -24,17 +25,18 @@
   "author": "Patrick Martin",
   "license": "MIT",
   "devDependencies": {
-    "@angular/common": "2.4.10",
-    "@angular/compiler": "2.4.10",
-    "@angular/compiler-cli": "2.4.10",
-    "@angular/core": "2.4.10",
-    "@angular/forms": "2.4.10",
-    "@angular/http": "2.4.10",
-    "@angular/platform-browser": "2.4.10",
-    "@angular/platform-browser-dynamic": "2.4.10",
-    "@angular/router": "3.4.10",
+    "@angular/animations": "4.0.0",
+    "@angular/common": "4.0.0",
+    "@angular/compiler": "4.0.0",
+    "@angular/compiler-cli": "4.0.0",
+    "@angular/core": "4.0.0",
+    "@angular/forms": "4.0.0",
+    "@angular/http": "4.0.0",
+    "@angular/platform-browser": "4.0.0",
+    "@angular/platform-browser-dynamic": "4.0.0",
+    "@angular/router": "4.0.0",
     "@types/jasmine": "2.5.46",
-    "@types/node": "7.0.8",
+    "@types/node": "7.0.11",
     "concurrently": "3.4.0",
     "core-js": "2.4.1",
     "http-server": "^0.9.0",
@@ -43,10 +45,10 @@
     "rxjs": "5.2.0",
     "tslint": "4.5.1",
     "typescript": "2.2.1",
-    "webpack": "^2.2.1",
-    "zone.js": "0.8.4"
+    "webpack": "^2.3.2",
+    "zone.js": "0.8.5"
   },
-  "repository" : {
+  "repository": {
     "type": "git",
     "url": "https://github.com/patrimart/ngvas"
   }

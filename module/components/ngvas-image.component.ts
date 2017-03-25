@@ -20,7 +20,7 @@ export class NgvasImageComponent extends NgvasBaseComponent<ImageShape> {
         super(ImageShape);
     }
 
-    @Input("image")
-    public set image (i: string) { this.execOrDelay((s: ImageShape) => s.withImage(i)); };
+    @Input("src")
+    public set src (i: string) { this.execOrDelay((s: ImageShape) => s.withImage(i)); };
 
 }

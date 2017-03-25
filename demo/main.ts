@@ -11,11 +11,23 @@ import { NgvasModule, tweens, hitAreas } from "ngvas";
   template: `
     <h1>Ngvas App Demo</h1>
     <ngvas [width]="500" [height]="500" (ready)="tweenComplete()">
-      <!--ngvas-rectangle [fill]="fill" [translate]="xy" [size]="size" [rotate]="rotate" origin="center"></ngvas-rectangle>
+
+      <ngvas-rectangle [fill]="fill" [translate]="xy" [size]="size" [rotate]="rotate" origin="center"></ngvas-rectangle>
       <ngvas-circle [stroke]="stroke" [translate]="xy" [radius]="50" origin="center"></ngvas-circle>
       <ngvas-rectangle [fill]="squareFill" [translate]="squareTranslate" [size]="[100, 100]" origin="center" [hitArea]="pixelHitArea"
-        (click)="onClick($event)" (mouseenter)="onMouseEnter($event)" (mouseleave)="onMouseLeave($event)"></ngvas-rectangle-->
-      <ngvas-circle fill="#ff0000" [x]="250" [y]="250" [radius]="100" origin="center"></ngvas-circle>
+        (click)="onClick($event)" (mouseenter)="onMouseEnter($event)" (mouseleave)="onMouseLeave($event)"></ngvas-rectangle>
+
+      <!--
+      <ngvas-circle fill="#ff0000" [x]="250" [y]="250" [radius]="50" [translate]="[[50, 50], 1000]" origin="center"></ngvas-circle>
+      <ngvas-arc fill="#ff0000" [x]="250" [y]="250" [radius]="50" [angle]="[270, 1000]" origin="center" [connectToCenter]="true"></ngvas-arc>
+      <ngvas-bezier [stroke]="{ width: 4 }" [x]="50" [y]="50" [curves]="[[ [100, 100], [150, 450], [400, 300], [400, 400] ]]"></ngvas-bezier>
+      <ngvas-image fill="#ff0000" [width]="100" [height]="100" src="../test/bird.jpg" [x]="10" [y]="10" [translate]="[[400, 400], 2000]"></ngvas-image>
+      <ngvas-line [stroke]="{ width: 4 }" [lines]="[ [[100, 100], [200, 200]], [[200, 200], [100, 400]] ]"></ngvas-line>
+      <ngvas-quadratic [stroke]="{ width: 4 }" [x]="50" [y]="50" [curves]="[[ [100, 100], [150, 450], [400, 400] ]]"></ngvas-quadratic>
+      <ngvas-text fill="#0000ff" [textStyle]="{ font: '48px Arial' }" [x]="50" [y]="250" text="This is text."></ngvas-text>
+      <ngvas-polygon fill="#ff0000" [x]="50" [y]="50" [sides]="[[ [100, 100], [150, 450] ]]"></ngvas-polygon>
+      -->
+
     </ngvas>
   `,
 })
@@ -51,6 +63,7 @@ class AppComponent {
   }
 
   public onClick (e: MouseEvent): void {
+    console.log(e);
     this.squareTranslate = [[0, -100], 500, tweens.easings.easeOutCircular, () => this.squareTranslate = [[0, 100], 800, tweens.easings.easeOutBounce]];
   }
 

@@ -32,6 +32,7 @@ export class NgvasComponent implements AfterContentInit, OnDestroy {
 
     private _contentSubscription: Subscription;
 
+
     @Output("ready")
     public ready = new EventEmitter<NgvasComponent>();
 

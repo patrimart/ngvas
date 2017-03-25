@@ -211,6 +211,12 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
     @Output("click")
     public clickEvent = new EventEmitter<MouseEvent>();
 
+    @Output("dblclick")
+    public dblclickEvent = new EventEmitter<MouseEvent>();
+
+    @Output("wheel")
+    public wheelEvent = new EventEmitter<WheelEvent>();
+
     @Output("mouseenter")
     public mouseenterEvent = new EventEmitter<MouseEvent>();
 
@@ -240,13 +246,19 @@ export abstract class NgvasBaseComponent <S extends BaseStyle> {
         this._shape = new this.Clazz(origCanvas, ctx, this.name);
 
         if (this.clickEvent.observers.length > 0) {
-            this._shape.addEventListener("click", e => { this.clickEvent.emit(e); });
+            this._shape.addEventListener("click", e => { this.clickEvent.emit(e as MouseEvent); });
+        }
+        if (this.dblclickEvent.observers.length > 0) {
+            this._shape.addEventListener("dblclick", e => { this.dblclickEvent.emit(e as MouseEvent); });
+        }
+        if (this.wheelEvent.observers.length > 0) {
+            this._shape.addEventListener("wheel", e => { this.wheelEvent.emit(e as WheelEvent); });
         }
         if (this.mouseenterEvent.observers.length > 0) {
-            this._shape.addEventListener("mouseenter", e => { this.mouseenterEvent.emit(e); });
+            this._shape.addEventListener("mouseenter", e => { this.mouseenterEvent.emit(e as MouseEvent); });
         }
         if (this.mouseleaveEvent.observers.length > 0) {
-            this._shape.addEventListener("mouseleave", e => { this.mouseleaveEvent.emit(e); });
+            this._shape.addEventListener("mouseleave", e => { this.mouseleaveEvent.emit(e as MouseEvent); });
         }
 
         // TODO Wrap this._shape in a Proxy to emit Outputs.

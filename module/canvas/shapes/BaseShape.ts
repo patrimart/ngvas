@@ -212,10 +212,10 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
             this._currentCtxt.scaleX = ctxt.scaleX * this.scaleX;
             this._currentCtxt.scaleY = ctxt.scaleY * this.scaleY;
-            this._currentCtxt.skewX = ctxt.skewX + this.skewX;
-            this._currentCtxt.skewY = ctxt.skewY + this.skewY;
-            this._currentCtxt.moveX = ctxt.moveX + this.x;
-            this._currentCtxt.moveY = ctxt.moveY + this.y;
+            this._currentCtxt.skewX  = ctxt.skewX + (this.skewX * DEG_TO_ANGLE);
+            this._currentCtxt.skewY  = ctxt.skewY + (this.skewY * DEG_TO_ANGLE);
+            this._currentCtxt.moveX  = ctxt.moveX + this.x;
+            this._currentCtxt.moveY  = ctxt.moveY + this.y;
             this._currentCtxt.rotate = ctxt.rotate + this.rotation;
 
             this.ctx.setTransform(
@@ -228,23 +228,28 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
                 const c = this._clipShape;
                 // this.ctx.save();
                 this.ctx.setTransform(
-                    this._currentCtxt.scaleX * c.scaleX, this._currentCtxt.skewX + c.skewX, this._currentCtxt.skewY + c.skewY,
-                    this._currentCtxt.scaleY * c.scaleY, this._currentCtxt.moveX + c.x, this._currentCtxt.moveY + c.y,
+                    this._currentCtxt.scaleX * c.scaleX,
+                    this._currentCtxt.skewX + (c.skewX * DEG_TO_ANGLE),
+                    this._currentCtxt.skewY + (c.skewY * DEG_TO_ANGLE),
+                    this._currentCtxt.scaleY * c.scaleY,
+                    this._currentCtxt.moveX + c.x,
+                    this._currentCtxt.moveY + c.y,
                 );
                 this.ctx.rotate(c.rotation * DEG_TO_ANGLE);
                 this._clipShape.customDraw(this._currentCtxt);
                 // this.ctx.restore();
                 this.ctx.clip();
                 this.ctx.setTransform(
-                    this._currentCtxt.scaleX, this._currentCtxt.skewX, this._currentCtxt.skewY,
-                    this._currentCtxt.scaleY, this._currentCtxt.moveX, this._currentCtxt.moveY,
+                    this._currentCtxt.scaleX,
+                    this._currentCtxt.skewX,
+                    this._currentCtxt.skewY,
+                    this._currentCtxt.scaleY,
+                    this._currentCtxt.moveX, this._currentCtxt.moveY,
                 );
                 this.ctx.rotate(-c.rotation * DEG_TO_ANGLE);
             }
 
             this.customDraw(this._currentCtxt);
-            // this.ctx.rotate(-this._currentCtxt.rotate * DEG_TO_ANGLE);
-            // this.ctx.setTransform(ctxt.scaleX, ctxt.skewX, ctxt.skewY, ctxt.scaleY, ctxt.moveX, ctxt.moveY);
         }
     }
 
@@ -294,20 +299,24 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
     }
 
 
-    public addEventListener (event: string, listener: (e: MouseEvent) => void): void {
+    public addEventListener (event: string, listener: (e: Event) => void): void {
 
         this.removeEventListener(event);
 
         const rect = this.canvas.getBoundingClientRect();
 
-        if (event === "click") {
+        if (event === "click" || event === "dblclick") {
 
-            this.canvas.addEventListener("click", this._eventHandlers.click = (evt: MouseEvent) => {
-                const clientX = evt.clientX - rect.left,
-                      clientY = evt.clientY - rect.top;
-                if (this.isVisible && this.isHit(clientX, clientY)) {
-                    listener(new MouseEvent("click", Object.assign({}, evt, { clientX, clientY, relatedTarget: null })));
-                }
+            this.canvas.addEventListener(event, this._eventHandlers[event] = (evt: MouseEvent) => {
+                const clientX = evt.clientX - rect.left, clientY = evt.clientY - rect.top;
+                if (this.isVisible && this.isHit(clientX, clientY)) { listener(evt); }
+            }, false);
+
+        } else if (event === "wheel") {
+
+            this.canvas.addEventListener(event, this._eventHandlers.wheel = (evt: WheelEvent) => {
+                const clientX = evt.clientX - rect.left, clientY = evt.clientY - rect.top;
+                if (this.isVisible && this.isHit(clientX, clientY)) { listener(evt); }
             }, false);
 
         } else if (event === "mouseenter" || event === "mouseleave") {
@@ -318,9 +327,10 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
                 let isOver = false;
                 this.canvas.addEventListener("mousemove", this._eventHandlers.mousemove = (evt: MouseEvent) => {
-                    const clientX = evt.clientX - rect.left,
-                          clientY = evt.clientY - rect.top;
+
+                    const clientX = evt.clientX - rect.left, clientY = evt.clientY - rect.top;
                     const isHit = this.isVisible &&  this.isHit(clientX, clientY);
+
                     if (isOver && ! isHit) {
                         this.canvas.style.cursor = "default";
                         isOver = false;

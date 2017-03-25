@@ -54,6 +54,8 @@ export declare abstract class NgvasBaseComponent<S extends BaseStyle> {
     }>;
     shapeOut: EventEmitter<S>;
     clickEvent: EventEmitter<MouseEvent>;
+    dblclickEvent: EventEmitter<MouseEvent>;
+    wheelEvent: EventEmitter<WheelEvent>;
     mouseenterEvent: EventEmitter<MouseEvent>;
     mouseleaveEvent: EventEmitter<MouseEvent>;
     /**

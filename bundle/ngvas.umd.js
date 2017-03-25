@@ -7,7 +7,7 @@
 		exports["ngvas"] = factory(require("@angular/core"), require("@angular/common"), require("@angular/platform-browser"));
 	else
 		root["ngvas"] = factory(root["@angular/core"], root["@angular/common"], root["@angular/platform-browser"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_34__, __WEBPACK_EXTERNAL_MODULE_35__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_35__, __WEBPACK_EXTERNAL_MODULE_36__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 34);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -235,6 +235,8 @@ class NgvasBaseComponent {
         /////////////////////////////////////////////
         // MOUSE EVENTS
         this.clickEvent = new core_1.EventEmitter();
+        this.dblclickEvent = new core_1.EventEmitter();
+        this.wheelEvent = new core_1.EventEmitter();
         this.mouseenterEvent = new core_1.EventEmitter();
         this.mouseleaveEvent = new core_1.EventEmitter();
     }
@@ -391,6 +393,12 @@ class NgvasBaseComponent {
         this._shape = new this.Clazz(origCanvas, ctx, this.name);
         if (this.clickEvent.observers.length > 0) {
             this._shape.addEventListener("click", e => { this.clickEvent.emit(e); });
+        }
+        if (this.dblclickEvent.observers.length > 0) {
+            this._shape.addEventListener("dblclick", e => { this.dblclickEvent.emit(e); });
+        }
+        if (this.wheelEvent.observers.length > 0) {
+            this._shape.addEventListener("wheel", e => { this.wheelEvent.emit(e); });
         }
         if (this.mouseenterEvent.observers.length > 0) {
             this._shape.addEventListener("mouseenter", e => { this.mouseenterEvent.emit(e); });
@@ -553,6 +561,14 @@ __decorate([
     core_1.Output("click"),
     __metadata("design:type", Object)
 ], NgvasBaseComponent.prototype, "clickEvent", void 0);
+__decorate([
+    core_1.Output("dblclick"),
+    __metadata("design:type", Object)
+], NgvasBaseComponent.prototype, "dblclickEvent", void 0);
+__decorate([
+    core_1.Output("wheel"),
+    __metadata("design:type", Object)
+], NgvasBaseComponent.prototype, "wheelEvent", void 0);
 __decorate([
     core_1.Output("mouseenter"),
     __metadata("design:type", Object)
@@ -961,8 +977,8 @@ class BaseShape {
         if (this.isVisible) {
             this._currentCtxt.scaleX = ctxt.scaleX * this.scaleX;
             this._currentCtxt.scaleY = ctxt.scaleY * this.scaleY;
-            this._currentCtxt.skewX = ctxt.skewX + this.skewX;
-            this._currentCtxt.skewY = ctxt.skewY + this.skewY;
+            this._currentCtxt.skewX = ctxt.skewX + (this.skewX * DEG_TO_ANGLE);
+            this._currentCtxt.skewY = ctxt.skewY + (this.skewY * DEG_TO_ANGLE);
             this._currentCtxt.moveX = ctxt.moveX + this.x;
             this._currentCtxt.moveY = ctxt.moveY + this.y;
             this._currentCtxt.rotate = ctxt.rotate + this.rotation;
@@ -971,7 +987,7 @@ class BaseShape {
             if (this._clipShape !== undefined) {
                 const c = this._clipShape;
                 // this.ctx.save();
-                this.ctx.setTransform(this._currentCtxt.scaleX * c.scaleX, this._currentCtxt.skewX + c.skewX, this._currentCtxt.skewY + c.skewY, this._currentCtxt.scaleY * c.scaleY, this._currentCtxt.moveX + c.x, this._currentCtxt.moveY + c.y);
+                this.ctx.setTransform(this._currentCtxt.scaleX * c.scaleX, this._currentCtxt.skewX + (c.skewX * DEG_TO_ANGLE), this._currentCtxt.skewY + (c.skewY * DEG_TO_ANGLE), this._currentCtxt.scaleY * c.scaleY, this._currentCtxt.moveX + c.x, this._currentCtxt.moveY + c.y);
                 this.ctx.rotate(c.rotation * DEG_TO_ANGLE);
                 this._clipShape.customDraw(this._currentCtxt);
                 // this.ctx.restore();
@@ -980,8 +996,6 @@ class BaseShape {
                 this.ctx.rotate(-c.rotation * DEG_TO_ANGLE);
             }
             this.customDraw(this._currentCtxt);
-            // this.ctx.rotate(-this._currentCtxt.rotate * DEG_TO_ANGLE);
-            // this.ctx.setTransform(ctxt.scaleX, ctxt.skewX, ctxt.skewY, ctxt.scaleY, ctxt.moveX, ctxt.moveY);
         }
     }
     setAnimationFunction(f) {
@@ -1021,11 +1035,19 @@ class BaseShape {
     addEventListener(event, listener) {
         this.removeEventListener(event);
         const rect = this.canvas.getBoundingClientRect();
-        if (event === "click") {
-            this.canvas.addEventListener("click", this._eventHandlers.click = (evt) => {
+        if (event === "click" || event === "dblclick") {
+            this.canvas.addEventListener(event, this._eventHandlers[event] = (evt) => {
                 const clientX = evt.clientX - rect.left, clientY = evt.clientY - rect.top;
                 if (this.isVisible && this.isHit(clientX, clientY)) {
-                    listener(new MouseEvent("click", Object.assign({}, evt, { clientX, clientY, relatedTarget: null })));
+                    listener(evt);
+                }
+            }, false);
+        }
+        else if (event === "wheel") {
+            this.canvas.addEventListener(event, this._eventHandlers.wheel = (evt) => {
+                const clientX = evt.clientX - rect.left, clientY = evt.clientY - rect.top;
+                if (this.isVisible && this.isHit(clientX, clientY)) {
+                    listener(evt);
                 }
             }, false);
         }
@@ -1950,8 +1972,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
-const platform_browser_1 = __webpack_require__(35);
-const common_1 = __webpack_require__(34);
+const platform_browser_1 = __webpack_require__(36);
+const common_1 = __webpack_require__(35);
 const ngvas_component_1 = __webpack_require__(33);
 const ngvas_arc_component_1 = __webpack_require__(24);
 const ngvas_bezier_component_1 = __webpack_require__(25);
@@ -2593,14 +2615,14 @@ let NgvasImageComponent = NgvasImageComponent_1 = class NgvasImageComponent exte
     constructor() {
         super(ImageShape_1.ImageShape);
     }
-    set image(i) { this.execOrDelay((s) => s.withImage(i)); }
+    set src(i) { this.execOrDelay((s) => s.withImage(i)); }
     ;
 };
 __decorate([
-    core_1.Input("image"),
+    core_1.Input("src"),
     __metadata("design:type", String),
     __metadata("design:paramtypes", [String])
-], NgvasImageComponent.prototype, "image", null);
+], NgvasImageComponent.prototype, "src", null);
 NgvasImageComponent = NgvasImageComponent_1 = __decorate([
     core_1.Component({
         // moduleId: String(module.id),
@@ -2962,18 +2984,6 @@ exports.NgvasComponent = NgvasComponent;
 
 /***/ }),
 /* 34 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_34__;
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_35__;
-
-/***/ }),
-/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3019,6 +3029,18 @@ var shapes;
     shapes.TextShape = TextShape_1.TextShape;
 })(shapes = exports.shapes || (exports.shapes = {}));
 //# sourceMappingURL=index.js.map
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_35__;
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_36__;
 
 /***/ })
 /******/ ]);

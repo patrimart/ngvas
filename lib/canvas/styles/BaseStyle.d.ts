@@ -18,7 +18,7 @@ export declare abstract class BaseStyle extends BaseShape implements IComposeSty
     compose(alpha?: number, overlay?: ComposeOverlay): this;
     withFill(style?: ColorStyle, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     withStroke(width: number, style: ColorStyle, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
-    withStroke(width: number, style: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number): this;
+    withStroke(width?: number, style?: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number): this;
     withShadow(blur: number, color: string | number, offsetX: number, offsetY: number, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
     textStyle(font?: string, align?: TextAlign, baseline?: TextBaseline): this;
     draw(ctxt: ContextTransformer): void;

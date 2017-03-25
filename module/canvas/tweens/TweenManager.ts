@@ -39,7 +39,7 @@ export class TweenManager {
 
     public addTween (
         target: any,
-        tween: TweenFunc,
+        tween: TweenFunc | undefined,
         duration: number,
         toValues: number[],
         paramKeys: string[],
@@ -52,7 +52,6 @@ export class TweenManager {
         const start = Date.now();
         const end = Date.now() + duration;
         const startValues = paramKeys.map(k => (target as any)[k]);
-        tween = tween || easeLinear;
 
         const func = function () {
 
@@ -66,7 +65,7 @@ export class TweenManager {
                 return false;
             }
 
-            const results = startValues.map((v, i) => tween(now - start, v, toValues[i] - v, duration));
+            const results = startValues.map((v, i) => (tween || easeLinear)(now - start, v, toValues[i] - v, duration));
             paramKeys.forEach(function (p, i) { (target as any)[p] = results[i]; });
             if (postFunc !== undefined) { postFunc(results); }
             return true;

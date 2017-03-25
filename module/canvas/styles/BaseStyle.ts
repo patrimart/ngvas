@@ -57,7 +57,7 @@ export abstract class BaseStyle extends BaseShape implements IComposeStyle, IFil
 
 
     public withFill (style?: ColorStyle, duration = 0, tween?: TweenFunc, callback?: (shape: this) => void): this {
-        if (duration > 1) {
+        if (duration > 1 && style !== undefined) {
             const vals = parseColorStyle(style);
             const props = [ "fillColorR", "fillColorG", "fillColorB", "fillColorA" ];
             this.tweenManager.addTween(this._styleTweenHelper, tween, duration, vals, props, callback);
@@ -71,7 +71,7 @@ export abstract class BaseStyle extends BaseShape implements IComposeStyle, IFil
 
 
     public withStroke (width: number, style: ColorStyle, duration?: number, tween?: TweenFunc, callback?: (shape: this) => void): this;
-    public withStroke (width: number, style: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number): this;
+    public withStroke (width?: number, style?: ColorStyle, join?: LineJoin, cap?: LineCap, dashOffset?: number, miterLimit?: number): this;
     public withStroke (...args: any[]): this {
         if (typeof args[2] === "number" && args[2] > 1) {
             const vals = [ args[0] | 0, ...parseColorStyle(args[1]) ];

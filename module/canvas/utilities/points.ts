@@ -46,7 +46,7 @@ function Bezier (a: {x: number, y: number}, b: {x: number, y: number}, c: {x: nu
  * @params a,b,c,d
  * @return x
  */
-function cubic (a: number, b: number, c: number, d: number) {
+function cubic (a: number, b: number, c: number, d: number): number {
 
     let m, m2, k, n, n2, x, r, rc, theta, sign, dans;
 
@@ -91,5 +91,5 @@ function cubic (a: number, b: number, c: number, d: number) {
         x = dans;
     }
 
-    return x;
+    return x || 0;
 }

@@ -119,7 +119,7 @@ class BaseStyle extends BaseShape_1.BaseShape {
         return this;
     }
     withFill(style, duration = 0, tween, callback) {
-        if (duration > 1) {
+        if (duration > 1 && style !== undefined) {
             const vals = color_style_parser_1.parseColorStyle(style);
             const props = ["fillColorR", "fillColorG", "fillColorB", "fillColorA"];
             this.tweenManager.addTween(this._styleTweenHelper, tween, duration, vals, props, callback);
@@ -599,6 +599,7 @@ function createOffscreenCanvas(canvas) {
 }
 class CanvasGroup extends Group_1.Group {
     constructor(canvas, offscreenCanvas = createOffscreenCanvas(canvas), isActive = false) {
+        // as any disables null check.
         super(canvas, offscreenCanvas.getContext("2d"), canvas.id || "CanvasGroup");
         this._reqAniFrameId = 0;
         super.isActive = isActive;
@@ -684,6 +685,9 @@ class PixelHitArea {
      * Creates an instance of class.
      */
     constructor(width, height) {
+        // private shape: T;
+        this.canvas = null;
+        this.ctx = null;
         this.canvas = document.createElement("canvas");
         this.canvas.width = width;
         this.canvas.height = height;
@@ -693,6 +697,9 @@ class PixelHitArea {
      * Calculates if the x, y point is within the hit area.
      */
     isHit(x, y, globalCtx, target) {
+        if (this.canvas === null || this.ctx === null) {
+            throw new ReferenceError("PixelHitArea was not initialized correctly.");
+        }
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();
         this.ctx.setTransform(globalCtx.scaleX, globalCtx.skewX, globalCtx.skewY, globalCtx.scaleY, globalCtx.moveX, globalCtx.moveY);
@@ -709,8 +716,8 @@ class PixelHitArea {
      * Cleans up the instance.
      */
     destroy() {
-        this.canvas = undefined;
-        this.ctx = undefined;
+        this.canvas = null;
+        this.ctx = null;
     }
 }
 exports.PixelHitArea = PixelHitArea;
@@ -829,6 +836,7 @@ class BaseShape {
         this.canvas = canvas;
         this.ctx = ctx;
         this._name = _name;
+        this._aniFunc = null;
         this._constraints = [];
         this._eventHandlers = {};
         this._currentCtxt = {
@@ -968,8 +976,8 @@ class BaseShape {
     }
     draw(ctxt) {
         if (this.isActive) {
-            if (this._aniFunc !== undefined && !this._aniFunc(this)) {
-                this._aniFunc = undefined;
+            if (this._aniFunc !== null && !this._aniFunc(this)) {
+                this._aniFunc = null;
             }
             this.tweenManager.tween();
             this._constraints.forEach(c => c(this));
@@ -1002,7 +1010,7 @@ class BaseShape {
         this._aniFunc = f;
     }
     removeAnimationFunction() {
-        this._aniFunc = undefined;
+        this._aniFunc = null;
     }
     isHit(x, y) {
         if (this.hitArea === undefined) {
@@ -2396,7 +2404,6 @@ class TweenManager {
         const start = Date.now();
         const end = Date.now() + duration;
         const startValues = paramKeys.map(k => target[k]);
-        tween = tween || easing_1.easeLinear;
         const func = function () {
             const now = Date.now();
             if (preFunc !== undefined) {
@@ -2412,7 +2419,7 @@ class TweenManager {
                 }
                 return false;
             }
-            const results = startValues.map((v, i) => tween(now - start, v, toValues[i] - v, duration));
+            const results = startValues.map((v, i) => (tween || easing_1.easeLinear)(now - start, v, toValues[i] - v, duration));
             paramKeys.forEach(function (p, i) { target[p] = results[i]; });
             if (postFunc !== undefined) {
                 postFunc(results);

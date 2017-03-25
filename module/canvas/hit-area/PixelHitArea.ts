@@ -12,8 +12,8 @@ const DEG_TO_ANGLE = 0.017453; // Math.PI / 180
 export class PixelHitArea implements IHitArea {
 
     // private shape: T;
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
+    private canvas: HTMLCanvasElement | null = null;
+    private ctx: CanvasRenderingContext2D | null = null;
 
     /**
      * Creates an instance of class.
@@ -32,6 +32,10 @@ export class PixelHitArea implements IHitArea {
      * Calculates if the x, y point is within the hit area.
      */
     public isHit (x: number, y: number, globalCtx: ContextTransformer, target: ITraceable): boolean {
+
+        if (this.canvas === null || this.ctx === null) {
+            throw new ReferenceError("PixelHitArea was not initialized correctly.");
+        }
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();
@@ -58,7 +62,7 @@ export class PixelHitArea implements IHitArea {
      * Cleans up the instance.
      */
     public destroy (): void {
-        this.canvas = undefined;
-        this.ctx = undefined;
+        this.canvas = null;
+        this.ctx = null;
     }
 }

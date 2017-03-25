@@ -1,5 +1,5 @@
 # ngvas
-## An Angular2 Module for HTML Canvas
+## An Angular2 / Angular4 Module for HTML Canvas
 
 
 The **ngvas** library allows you to control the `<canvas>` element from within Angular 2. Or is it 4 now?

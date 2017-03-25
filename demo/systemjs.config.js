@@ -45,8 +45,6 @@
       '@angular/router': '../node_modules/@angular/router/bundles/router.umd.js',
       '@angular/router/upgrade': '../node_modules/@angular/router/bundles/router-upgrade.umd.js',
       '@angular/forms': '../node_modules/@angular/forms/bundles/forms.umd.js',
-      '@angular/upgrade': '../node_modules/@angular/upgrade/bundles/upgrade.umd.js',
-      '@angular/upgrade/static': '../node_modules/@angular/upgrade/bundles/upgrade-static.umd.js',
 
       // other libraries
       'rxjs':                      '../node_modules/rxjs',
@@ -54,9 +52,6 @@
       'ts':                        '../node_modules/plugin-typescript/lib/plugin.js',
       'typescript':                '../node_modules/typescript/lib/typescript.js',
       'ngvas':                     '../bundle/ngvas.umd.js'
-      // 'ngvas':                     '../lib'
-
-      // '../module': '../module'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
@@ -66,10 +61,7 @@
       },
       rxjs: {
         defaultExtension: 'js'
-      },
-      // '../module': {
-      //     defaultExtension: 'ts'
-      // }
+      }
     }
   });
 

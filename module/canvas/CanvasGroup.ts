@@ -25,7 +25,8 @@ export class CanvasGroup extends Group {
         offscreenCanvas = createOffscreenCanvas(canvas),
         isActive = false
     ) {
-        super(canvas, offscreenCanvas.getContext("2d"), canvas.id || "CanvasGroup");
+        // as any disables null check.
+        super(canvas, offscreenCanvas.getContext("2d") as CanvasRenderingContext2D, canvas.id || "CanvasGroup");
         super.isActive = isActive;
         this.width = canvas.width;
         this.height = canvas.height;
@@ -61,7 +62,7 @@ export class CanvasGroup extends Group {
     public draw (ctxt: ContextTransformer) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         super.draw(ctxt);
-        this.canvas.getContext("2d").putImageData(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height), 0, 0);
+        (this.canvas.getContext("2d") as CanvasRenderingContext2D).putImageData(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height), 0, 0);
         if (this.isActive) {
             this._reqAniFrameId = window.requestAnimationFrame(() => this.draw(canvasCtxt));
         }

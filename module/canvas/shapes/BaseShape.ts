@@ -24,7 +24,7 @@ export type BaseShapeConstructor<T> = { new (canvas: HTMLCanvasElement, ctx: Can
  */
 export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
-    private _aniFunc: (shape: IShape) => boolean;
+    private _aniFunc: null | ((shape: IShape) => boolean) = null;
 
     private _hitArea: IHitArea;
     private _constraints: ConstraintFunction[] = [];
@@ -201,8 +201,8 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
     public draw (ctxt: ContextTransformer): void {
 
         if (this.isActive) {
-            if (this._aniFunc !== undefined && ! this._aniFunc(this)) {
-                this._aniFunc = undefined;
+            if (this._aniFunc !== null && ! this._aniFunc(this)) {
+                this._aniFunc = null;
             }
             this.tweenManager.tween();
             this._constraints.forEach(c => c(this));
@@ -259,7 +259,7 @@ export abstract class BaseShape implements IShape, ITraceable, IConstrainable {
 
 
     public removeAnimationFunction (): void {
-        this._aniFunc = undefined;
+        this._aniFunc = null;
     }
 
 

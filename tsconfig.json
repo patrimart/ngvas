@@ -14,6 +14,7 @@
     "noUnusedParameters": true,
     "allowUnreachableCode": false,
     "suppressImplicitAnyIndexErrors": false,
+    "strictNullChecks": false,
     "outDir": "lib"
   },
   "include": [

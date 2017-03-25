@@ -50,7 +50,7 @@ export function init (canvas: HTMLCanvasElement, isActive = false) {
             shape.forEach(s => cg.addChild(s));
         },
 
-        Group (name?: string) {
+        Group (name = "Group_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
             return new Group(canvas, cg.context, name);
         },
 

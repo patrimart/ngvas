@@ -6,6 +6,8 @@ The **ngvas** library allows you to control the `<canvas>` element from within A
 
 Look in the `/demo` directory for a working example.
 
+Experiment with **ngvas** in a [Plunker](https://plnkr.co/edit/Kc57baYFUnSY8MfDznZs?p=preview).
+
 ---
 
 Example Angular Module:

@@ -11,7 +11,7 @@
     transpiler: 'ts',
     typescriptOptions: {
       // Copy of compiler options in standard tsconfig.json
-      "target": "es2015",
+      "target": "es5",
       "module": "system",
       "moduleResolution": "node",
       "sourceMap": true,

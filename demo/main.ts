@@ -16,7 +16,7 @@ import { NgvasModule, tweens, hitAreas } from "ngvas";
       <ngvas-circle [stroke]="stroke" [translate]="xy" [radius]="50" origin="center"></ngvas-circle>
       <ngvas-rectangle [fill]="squareFill" [translate]="squareTranslate" [size]="[100, 100]" origin="center" [hitArea]="pixelHitArea"
         (click)="onClick($event)" (mouseenter)="onMouseEnter($event)" (mouseleave)="onMouseLeave($event)"></ngvas-rectangle>
-      <ngvas-image fill="#ff0000" [width]="100" [height]="100" src="../test/bird.jpg" [x]="10" [y]="10" [translate]="[[400, 400], 2000]"></ngvas-image>
+      <ngvas-image fill="rgba(0,0,0,0)" [width]="100" [height]="100" src="../test/bird.jpg" [x]="10" [y]="10" [translate]="[[400, 400], 2000]"></ngvas-image>
 
       <!--
       <ngvas-circle fill="#ff0000" [x]="250" [y]="250" [radius]="50" [translate]="[[50, 50], 1000]" origin="center"></ngvas-circle>

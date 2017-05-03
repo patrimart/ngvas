@@ -171,8 +171,11 @@ Draws an image from the
 | src             | `string`   | The URL path to the image.  |
 
 ```html
-<ngvas-image [x]="10" [y]="10" [width]="100" [height]="100" src="../test/bird.jpg"></ngvas-image>
+<ngvas-image fill="rgba(0,0,0,0)" [x]="10" [y]="10" [width]="100" [height]="100" src="../test/bird.jpg"></ngvas-image>
 ```
+
+Note: As a temporary fix, `<ngvas-mage>` must set `fill` to make it visible.
+
 
 ---
 

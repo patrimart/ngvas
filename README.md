@@ -174,7 +174,7 @@ Draws an image from the
 <ngvas-image fill="rgba(0,0,0,0)" [x]="10" [y]="10" [width]="100" [height]="100" src="../test/bird.jpg"></ngvas-image>
 ```
 
-Note: As a temporary fix, `<ngvas-mage>` must set `fill` to make it visible.
+Note: As a temporary fix, `<ngvas-image>` must set `fill` to make it visible.
 
 
 ---

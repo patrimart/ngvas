@@ -1,7 +1,7 @@
 
 import {
     Component, Inject, ElementRef, AfterContentInit, OnDestroy,
-    ContentChildren, QueryList, Input, Output, EventEmitter, ViewChild, Renderer,
+    ContentChildren, QueryList, Input, Output, EventEmitter, ViewChild, Renderer2,
 } from "@angular/core";
 
 import { Subscription } from "rxjs/Subscription";
@@ -38,7 +38,7 @@ export class NgvasComponent implements AfterContentInit, OnDestroy {
 
 
     public constructor(
-        @Inject(Renderer) private renderer: Renderer,
+        @Inject(Renderer2) private renderer: Renderer2,
     ) {}
 
 
@@ -68,8 +68,8 @@ export class NgvasComponent implements AfterContentInit, OnDestroy {
     public ngAfterContentInit (): void {
 
         const canvas = this.canvasRef.nativeElement;
-        this.renderer.setElementAttribute(canvas, "width", String(this._width));
-        this.renderer.setElementAttribute(canvas, "height", String(this._height));
+        this.renderer.setAttribute(canvas, "width", String(this._width));
+        this.renderer.setAttribute(canvas, "height", String(this._height));
 
         this._canvasGroup = new CanvasGroup(canvas, undefined, this._isActive);
         this.contentChildren.forEach(c => this._canvasGroup.addChild(c.initShape(canvas, this._canvasGroup.context)));

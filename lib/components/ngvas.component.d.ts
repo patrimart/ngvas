@@ -1,4 +1,4 @@
-import { ElementRef, AfterContentInit, OnDestroy, QueryList, EventEmitter, Renderer } from "@angular/core";
+import { ElementRef, AfterContentInit, OnDestroy, QueryList, EventEmitter, Renderer2 } from "@angular/core";
 import { CanvasGroup } from "../canvas/CanvasGroup";
 import { BaseStyle } from "../canvas/styles/BaseStyle";
 import { NgvasBaseComponent } from "./base.component";
@@ -12,7 +12,7 @@ export declare class NgvasComponent implements AfterContentInit, OnDestroy {
     private _isActive;
     private _contentSubscription;
     ready: EventEmitter<NgvasComponent>;
-    constructor(renderer: Renderer);
+    constructor(renderer: Renderer2);
     width: number;
     height: number;
     active: boolean;

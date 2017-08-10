@@ -1,0 +1,29 @@
+
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [ "es2015", "dom" ],
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "suppressImplicitAnyIndexErrors": false,
+    "strictNullChecks": false,
+    "outDir": "lib"
+  },
+  "include": [
+    "./module/**/*"
+  ],
+  "exclude": [
+    "./node_modules"
+  ],
+  "angularCompilerOptions": {
+    "genDir": "./ngfactory"
+  }
+}

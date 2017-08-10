@@ -210,15 +210,6 @@ var ShapeType;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 /**
@@ -424,159 +415,40 @@ class NgvasBaseComponent {
         this._shape ? f(this._shape) : this._delayedSetters.push(f);
     }
 }
-__decorate([
-    core_1.Input("name"),
-    __metadata("design:type", String)
-], NgvasBaseComponent.prototype, "name", void 0);
-__decorate([
-    core_1.Input("active"),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], NgvasBaseComponent.prototype, "active", null);
-__decorate([
-    core_1.Input("visible"),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], NgvasBaseComponent.prototype, "visible", null);
-__decorate([
-    core_1.Input("x"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "x", null);
-__decorate([
-    core_1.Input("y"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "y", null);
-__decorate([
-    core_1.Input("origin"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "origin", null);
-__decorate([
-    core_1.Input("width"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "width", null);
-__decorate([
-    core_1.Input("height"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "height", null);
-__decorate([
-    core_1.Input("rotation"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "rotation", null);
-__decorate([
-    core_1.Input("scaleX"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "scaleX", null);
-__decorate([
-    core_1.Input("scaleY"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "scaleY", null);
-__decorate([
-    core_1.Input("skewX"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "skewX", null);
-__decorate([
-    core_1.Input("skewY"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "skewY", null);
-__decorate([
-    core_1.Input("scale"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "scale", null);
-__decorate([
-    core_1.Input("size"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "size", null);
-__decorate([
-    core_1.Input("skew"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "skew", null);
-__decorate([
-    core_1.Input("rotate"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "rotate", null);
-__decorate([
-    core_1.Input("translate"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "translate", null);
-__decorate([
-    core_1.Input("animate"),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Function])
-], NgvasBaseComponent.prototype, "animate", null);
-__decorate([
-    core_1.Input("constrain"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasBaseComponent.prototype, "constrain", null);
-__decorate([
-    core_1.Input("hitArea"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "hitArea", null);
-__decorate([
-    core_1.Input("opacity"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasBaseComponent.prototype, "opacity", null);
-__decorate([
-    core_1.Input("compose"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "compose", null);
-__decorate([
-    core_1.Input("fill"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "fill", null);
-__decorate([
-    core_1.Input("stroke"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "stroke", null);
-__decorate([
-    core_1.Input("shadow"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasBaseComponent.prototype, "shadow", null);
-__decorate([
-    core_1.Output("shape"),
-    __metadata("design:type", Object)
-], NgvasBaseComponent.prototype, "shapeOut", void 0);
-__decorate([
-    core_1.Output("click"),
-    __metadata("design:type", Object)
-], NgvasBaseComponent.prototype, "clickEvent", void 0);
-__decorate([
-    core_1.Output("dblclick"),
-    __metadata("design:type", Object)
-], NgvasBaseComponent.prototype, "dblclickEvent", void 0);
-__decorate([
-    core_1.Output("wheel"),
-    __metadata("design:type", Object)
-], NgvasBaseComponent.prototype, "wheelEvent", void 0);
-__decorate([
-    core_1.Output("mouseenter"),
-    __metadata("design:type", Object)
-], NgvasBaseComponent.prototype, "mouseenterEvent", void 0);
-__decorate([
-    core_1.Output("mouseleave"),
-    __metadata("design:type", Object)
-], NgvasBaseComponent.prototype, "mouseleaveEvent", void 0);
+NgvasBaseComponent.propDecorators = {
+    'name': [{ type: core_1.Input, args: ["name",] },],
+    'active': [{ type: core_1.Input, args: ["active",] },],
+    'visible': [{ type: core_1.Input, args: ["visible",] },],
+    'x': [{ type: core_1.Input, args: ["x",] },],
+    'y': [{ type: core_1.Input, args: ["y",] },],
+    'origin': [{ type: core_1.Input, args: ["origin",] },],
+    'width': [{ type: core_1.Input, args: ["width",] },],
+    'height': [{ type: core_1.Input, args: ["height",] },],
+    'rotation': [{ type: core_1.Input, args: ["rotation",] },],
+    'scaleX': [{ type: core_1.Input, args: ["scaleX",] },],
+    'scaleY': [{ type: core_1.Input, args: ["scaleY",] },],
+    'skewX': [{ type: core_1.Input, args: ["skewX",] },],
+    'skewY': [{ type: core_1.Input, args: ["skewY",] },],
+    'scale': [{ type: core_1.Input, args: ["scale",] },],
+    'size': [{ type: core_1.Input, args: ["size",] },],
+    'skew': [{ type: core_1.Input, args: ["skew",] },],
+    'rotate': [{ type: core_1.Input, args: ["rotate",] },],
+    'translate': [{ type: core_1.Input, args: ["translate",] },],
+    'animate': [{ type: core_1.Input, args: ["animate",] },],
+    'constrain': [{ type: core_1.Input, args: ["constrain",] },],
+    'hitArea': [{ type: core_1.Input, args: ["hitArea",] },],
+    'opacity': [{ type: core_1.Input, args: ["opacity",] },],
+    'compose': [{ type: core_1.Input, args: ["compose",] },],
+    'fill': [{ type: core_1.Input, args: ["fill",] },],
+    'stroke': [{ type: core_1.Input, args: ["stroke",] },],
+    'shadow': [{ type: core_1.Input, args: ["shadow",] },],
+    'shapeOut': [{ type: core_1.Output, args: ["shape",] },],
+    'clickEvent': [{ type: core_1.Output, args: ["click",] },],
+    'dblclickEvent': [{ type: core_1.Output, args: ["dblclick",] },],
+    'wheelEvent': [{ type: core_1.Output, args: ["wheel",] },],
+    'mouseenterEvent': [{ type: core_1.Output, args: ["mouseenter",] },],
+    'mouseleaveEvent': [{ type: core_1.Output, args: ["mouseleave",] },],
+};
 exports.NgvasBaseComponent = NgvasBaseComponent;
 //# sourceMappingURL=base.component.js.map
 
@@ -1972,12 +1844,6 @@ exports.toRgbaString = toRgbaString;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const platform_browser_1 = __webpack_require__(36);
@@ -1992,40 +1858,42 @@ const ngvas_polygon_component_1 = __webpack_require__(29);
 const ngvas_quadratic_component_1 = __webpack_require__(30);
 const ngvas_rectange_component_1 = __webpack_require__(31);
 const ngvas_text_component_1 = __webpack_require__(32);
-let NgvasModule = class NgvasModule {
-};
-NgvasModule = __decorate([
-    core_1.NgModule({
-        imports: [
-            platform_browser_1.BrowserModule,
-            common_1.CommonModule,
-        ],
-        declarations: [
-            ngvas_component_1.NgvasComponent,
-            ngvas_arc_component_1.NgvasArcComponent,
-            ngvas_bezier_component_1.NgvasBezierCurveComponent,
-            ngvas_circle_component_1.NgvasCircleComponent,
-            ngvas_image_component_1.NgvasImageComponent,
-            ngvas_line_component_1.NgvasLineComponent,
-            ngvas_polygon_component_1.NgvasPolygonComponent,
-            ngvas_quadratic_component_1.NgvasQuadraticCurveComponent,
-            ngvas_rectange_component_1.NgvasRectangleComponent,
-            ngvas_text_component_1.NgvasTextComponent,
-        ],
-        exports: [
-            ngvas_component_1.NgvasComponent,
-            ngvas_arc_component_1.NgvasArcComponent,
-            ngvas_bezier_component_1.NgvasBezierCurveComponent,
-            ngvas_circle_component_1.NgvasCircleComponent,
-            ngvas_image_component_1.NgvasImageComponent,
-            ngvas_line_component_1.NgvasLineComponent,
-            ngvas_polygon_component_1.NgvasPolygonComponent,
-            ngvas_quadratic_component_1.NgvasQuadraticCurveComponent,
-            ngvas_rectange_component_1.NgvasRectangleComponent,
-            ngvas_text_component_1.NgvasTextComponent,
-        ],
-    })
-], NgvasModule);
+class NgvasModule {
+}
+NgvasModule.decorators = [
+    { type: core_1.NgModule, args: [{
+                imports: [
+                    platform_browser_1.BrowserModule,
+                    common_1.CommonModule,
+                ],
+                declarations: [
+                    ngvas_component_1.NgvasComponent,
+                    ngvas_arc_component_1.NgvasArcComponent,
+                    ngvas_bezier_component_1.NgvasBezierCurveComponent,
+                    ngvas_circle_component_1.NgvasCircleComponent,
+                    ngvas_image_component_1.NgvasImageComponent,
+                    ngvas_line_component_1.NgvasLineComponent,
+                    ngvas_polygon_component_1.NgvasPolygonComponent,
+                    ngvas_quadratic_component_1.NgvasQuadraticCurveComponent,
+                    ngvas_rectange_component_1.NgvasRectangleComponent,
+                    ngvas_text_component_1.NgvasTextComponent,
+                ],
+                exports: [
+                    ngvas_component_1.NgvasComponent,
+                    ngvas_arc_component_1.NgvasArcComponent,
+                    ngvas_bezier_component_1.NgvasBezierCurveComponent,
+                    ngvas_circle_component_1.NgvasCircleComponent,
+                    ngvas_image_component_1.NgvasImageComponent,
+                    ngvas_line_component_1.NgvasLineComponent,
+                    ngvas_polygon_component_1.NgvasPolygonComponent,
+                    ngvas_quadratic_component_1.NgvasQuadraticCurveComponent,
+                    ngvas_rectange_component_1.NgvasRectangleComponent,
+                    ngvas_text_component_1.NgvasTextComponent,
+                ],
+            },] },
+];
+/** @nocollapse */
+NgvasModule.ctorParameters = () => [];
 exports.NgvasModule = NgvasModule;
 //# sourceMappingURL=ngvas.module.js.map
 
@@ -2440,20 +2308,11 @@ exports.TweenManager = TweenManager;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const ArcShape_1 = __webpack_require__(6);
 const base_component_1 = __webpack_require__(3);
-let NgvasArcComponent = NgvasArcComponent_1 = class NgvasArcComponent extends base_component_1.NgvasBaseComponent {
+class NgvasArcComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(ArcShape_1.ArcShape);
     }
@@ -2476,33 +2335,23 @@ let NgvasArcComponent = NgvasArcComponent_1 = class NgvasArcComponent extends ba
             this.execOrDelay((s) => s.withAngle(v));
         }
     }
+}
+NgvasArcComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-arc",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasArcComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasArcComponent.ctorParameters = () => [];
+NgvasArcComponent.propDecorators = {
+    'connectToCenter': [{ type: core_1.Input, args: ["connectToCenter",] },],
+    'radius': [{ type: core_1.Input, args: ["radius",] },],
+    'angle': [{ type: core_1.Input, args: ["angle",] },],
 };
-__decorate([
-    core_1.Input("connectToCenter"),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], NgvasArcComponent.prototype, "connectToCenter", null);
-__decorate([
-    core_1.Input("radius"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasArcComponent.prototype, "radius", null);
-__decorate([
-    core_1.Input("angle"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasArcComponent.prototype, "angle", null);
-NgvasArcComponent = NgvasArcComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-arc",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasArcComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasArcComponent);
 exports.NgvasArcComponent = NgvasArcComponent;
-var NgvasArcComponent_1;
 //# sourceMappingURL=ngvas-arc.component.js.map
 
 /***/ }),
@@ -2511,42 +2360,31 @@ var NgvasArcComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const BezierCurveShape_1 = __webpack_require__(8);
 const base_component_1 = __webpack_require__(3);
-let NgvasBezierCurveComponent = NgvasBezierCurveComponent_1 = class NgvasBezierCurveComponent extends base_component_1.NgvasBaseComponent {
+class NgvasBezierCurveComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(BezierCurveShape_1.BezierCurveShape);
     }
     set curves(cs) { this.execOrDelay((s) => { s.clear(); cs.forEach(c => s.addCurve(c)); }); }
     ;
+}
+NgvasBezierCurveComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-bezier",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasBezierCurveComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasBezierCurveComponent.ctorParameters = () => [];
+NgvasBezierCurveComponent.propDecorators = {
+    'curves': [{ type: core_1.Input, args: ["curves",] },],
 };
-__decorate([
-    core_1.Input("curves"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasBezierCurveComponent.prototype, "curves", null);
-NgvasBezierCurveComponent = NgvasBezierCurveComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-bezier",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasBezierCurveComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasBezierCurveComponent);
 exports.NgvasBezierCurveComponent = NgvasBezierCurveComponent;
-var NgvasBezierCurveComponent_1;
 //# sourceMappingURL=ngvas-bezier.component.js.map
 
 /***/ }),
@@ -2555,20 +2393,11 @@ var NgvasBezierCurveComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const CircleShape_1 = __webpack_require__(9);
 const base_component_1 = __webpack_require__(3);
-let NgvasCircleComponent = NgvasCircleComponent_1 = class NgvasCircleComponent extends base_component_1.NgvasBaseComponent {
+class NgvasCircleComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(CircleShape_1.CircleShape);
     }
@@ -2580,23 +2409,21 @@ let NgvasCircleComponent = NgvasCircleComponent_1 = class NgvasCircleComponent e
             this.execOrDelay((s) => s.withRadius(v));
         }
     }
+}
+NgvasCircleComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-circle",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasCircleComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasCircleComponent.ctorParameters = () => [];
+NgvasCircleComponent.propDecorators = {
+    'radius': [{ type: core_1.Input, args: ["radius",] },],
 };
-__decorate([
-    core_1.Input("radius"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasCircleComponent.prototype, "radius", null);
-NgvasCircleComponent = NgvasCircleComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-circle",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasCircleComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasCircleComponent);
 exports.NgvasCircleComponent = NgvasCircleComponent;
-var NgvasCircleComponent_1;
 //# sourceMappingURL=ngvas-circle.component.js.map
 
 /***/ }),
@@ -2605,42 +2432,31 @@ var NgvasCircleComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const ImageShape_1 = __webpack_require__(10);
 const base_component_1 = __webpack_require__(3);
-let NgvasImageComponent = NgvasImageComponent_1 = class NgvasImageComponent extends base_component_1.NgvasBaseComponent {
+class NgvasImageComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(ImageShape_1.ImageShape);
     }
     set src(i) { this.execOrDelay((s) => s.withImage(i)); }
     ;
+}
+NgvasImageComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-image",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasImageComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasImageComponent.ctorParameters = () => [];
+NgvasImageComponent.propDecorators = {
+    'src': [{ type: core_1.Input, args: ["src",] },],
 };
-__decorate([
-    core_1.Input("src"),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], NgvasImageComponent.prototype, "src", null);
-NgvasImageComponent = NgvasImageComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-image",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasImageComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasImageComponent);
 exports.NgvasImageComponent = NgvasImageComponent;
-var NgvasImageComponent_1;
 //# sourceMappingURL=ngvas-image.component.js.map
 
 /***/ }),
@@ -2649,42 +2465,31 @@ var NgvasImageComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const LineShape_1 = __webpack_require__(11);
 const base_component_1 = __webpack_require__(3);
-let NgvasLineComponent = NgvasLineComponent_1 = class NgvasLineComponent extends base_component_1.NgvasBaseComponent {
+class NgvasLineComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(LineShape_1.LineShape);
     }
     set lines(ls) { this.execOrDelay((s) => { s.clear(); ls.forEach(l => s.addLine(l)); }); }
     ;
+}
+NgvasLineComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-line",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasLineComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasLineComponent.ctorParameters = () => [];
+NgvasLineComponent.propDecorators = {
+    'lines': [{ type: core_1.Input, args: ["lines",] },],
 };
-__decorate([
-    core_1.Input("lines"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasLineComponent.prototype, "lines", null);
-NgvasLineComponent = NgvasLineComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-line",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasLineComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasLineComponent);
 exports.NgvasLineComponent = NgvasLineComponent;
-var NgvasLineComponent_1;
 //# sourceMappingURL=ngvas-line.component.js.map
 
 /***/ }),
@@ -2693,20 +2498,11 @@ var NgvasLineComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const PolyShape_1 = __webpack_require__(12);
 const base_component_1 = __webpack_require__(3);
-let NgvasPolygonComponent = NgvasPolygonComponent_1 = class NgvasPolygonComponent extends base_component_1.NgvasBaseComponent {
+class NgvasPolygonComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(PolyShape_1.PolyShape);
     }
@@ -2727,23 +2523,21 @@ let NgvasPolygonComponent = NgvasPolygonComponent_1 = class NgvasPolygonComponen
         });
     }
     ;
+}
+NgvasPolygonComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-polygon",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasPolygonComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasPolygonComponent.ctorParameters = () => [];
+NgvasPolygonComponent.propDecorators = {
+    'sides': [{ type: core_1.Input, args: ["sides",] },],
 };
-__decorate([
-    core_1.Input("sides"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasPolygonComponent.prototype, "sides", null);
-NgvasPolygonComponent = NgvasPolygonComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-polygon",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasPolygonComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasPolygonComponent);
 exports.NgvasPolygonComponent = NgvasPolygonComponent;
-var NgvasPolygonComponent_1;
 //# sourceMappingURL=ngvas-polygon.component.js.map
 
 /***/ }),
@@ -2752,42 +2546,31 @@ var NgvasPolygonComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const QuadraticCurveShape_1 = __webpack_require__(13);
 const base_component_1 = __webpack_require__(3);
-let NgvasQuadraticCurveComponent = NgvasQuadraticCurveComponent_1 = class NgvasQuadraticCurveComponent extends base_component_1.NgvasBaseComponent {
+class NgvasQuadraticCurveComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(QuadraticCurveShape_1.QuadraticCurveShape);
     }
     set curves(cs) { this.execOrDelay((s) => { s.clear(); cs.forEach(c => s.addCurve(c)); }); }
     ;
+}
+NgvasQuadraticCurveComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-quadratic",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasQuadraticCurveComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasQuadraticCurveComponent.ctorParameters = () => [];
+NgvasQuadraticCurveComponent.propDecorators = {
+    'curves': [{ type: core_1.Input, args: ["curves",] },],
 };
-__decorate([
-    core_1.Input("curves"),
-    __metadata("design:type", Array),
-    __metadata("design:paramtypes", [Array])
-], NgvasQuadraticCurveComponent.prototype, "curves", null);
-NgvasQuadraticCurveComponent = NgvasQuadraticCurveComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-quadratic",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasQuadraticCurveComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasQuadraticCurveComponent);
 exports.NgvasQuadraticCurveComponent = NgvasQuadraticCurveComponent;
-var NgvasQuadraticCurveComponent_1;
 //# sourceMappingURL=ngvas-quadratic.component.js.map
 
 /***/ }),
@@ -2796,35 +2579,26 @@ var NgvasQuadraticCurveComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const RectShape_1 = __webpack_require__(14);
 const base_component_1 = __webpack_require__(3);
-let NgvasRectangleComponent = NgvasRectangleComponent_1 = class NgvasRectangleComponent extends base_component_1.NgvasBaseComponent {
+class NgvasRectangleComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(RectShape_1.RectShape);
     }
-};
-NgvasRectangleComponent = NgvasRectangleComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-rectangle",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasRectangleComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasRectangleComponent);
+}
+NgvasRectangleComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-rectangle",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasRectangleComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasRectangleComponent.ctorParameters = () => [];
 exports.NgvasRectangleComponent = NgvasRectangleComponent;
-var NgvasRectangleComponent_1;
 //# sourceMappingURL=ngvas-rectange.component.js.map
 
 /***/ }),
@@ -2833,20 +2607,11 @@ var NgvasRectangleComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const TextShape_1 = __webpack_require__(15);
 const base_component_1 = __webpack_require__(3);
-let NgvasTextComponent = NgvasTextComponent_1 = class NgvasTextComponent extends base_component_1.NgvasBaseComponent {
+class NgvasTextComponent extends base_component_1.NgvasBaseComponent {
     constructor() {
         super(TextShape_1.TextShape);
     }
@@ -2856,28 +2621,22 @@ let NgvasTextComponent = NgvasTextComponent_1 = class NgvasTextComponent extends
         this.execOrDelay((s) => s.textStyle(t.font, t.align, t.baseline));
     }
     ;
+}
+NgvasTextComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-text",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasTextComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasTextComponent.ctorParameters = () => [];
+NgvasTextComponent.propDecorators = {
+    'text': [{ type: core_1.Input, args: ["text",] },],
+    'textStyle': [{ type: core_1.Input, args: ["textStyle",] },],
 };
-__decorate([
-    core_1.Input("text"),
-    __metadata("design:type", String),
-    __metadata("design:paramtypes", [String])
-], NgvasTextComponent.prototype, "text", null);
-__decorate([
-    core_1.Input("textStyle"),
-    __metadata("design:type", Object),
-    __metadata("design:paramtypes", [Object])
-], NgvasTextComponent.prototype, "textStyle", null);
-NgvasTextComponent = NgvasTextComponent_1 = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas-text",
-        template: "",
-        providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasTextComponent_1 }],
-    }),
-    __metadata("design:paramtypes", [])
-], NgvasTextComponent);
 exports.NgvasTextComponent = NgvasTextComponent;
-var NgvasTextComponent_1;
 //# sourceMappingURL=ngvas-text.component.js.map
 
 /***/ }),
@@ -2886,23 +2645,11 @@ var NgvasTextComponent_1;
 
 "use strict";
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
 const CanvasGroup_1 = __webpack_require__(4);
 const base_component_1 = __webpack_require__(3);
-let NgvasComponent = class NgvasComponent {
+class NgvasComponent {
     constructor(renderer) {
         this.renderer = renderer;
         this._width = 0;
@@ -2948,44 +2695,27 @@ let NgvasComponent = class NgvasComponent {
             this._contentSubscription.unsubscribe();
         }
     }
+}
+NgvasComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas",
+                template: "<ng-content></ng-content><canvas #ngvasCanvas></canvas>",
+                styles: [":not(canvas) { display: none; }"],
+            },] },
+];
+/** @nocollapse */
+NgvasComponent.ctorParameters = () => [
+    { type: core_1.Renderer2, decorators: [{ type: core_1.Inject, args: [core_1.Renderer2,] },] },
+];
+NgvasComponent.propDecorators = {
+    'canvasRef': [{ type: core_1.ViewChild, args: ["ngvasCanvas",] },],
+    'contentChildren': [{ type: core_1.ContentChildren, args: [base_component_1.NgvasBaseComponent,] },],
+    'ready': [{ type: core_1.Output, args: ["ready",] },],
+    'width': [{ type: core_1.Input, args: ["width",] },],
+    'height': [{ type: core_1.Input, args: ["height",] },],
+    'active': [{ type: core_1.Input, args: ["active",] },],
 };
-__decorate([
-    core_1.ViewChild("ngvasCanvas"),
-    __metadata("design:type", core_1.ElementRef)
-], NgvasComponent.prototype, "canvasRef", void 0);
-__decorate([
-    core_1.ContentChildren(base_component_1.NgvasBaseComponent),
-    __metadata("design:type", core_1.QueryList)
-], NgvasComponent.prototype, "contentChildren", void 0);
-__decorate([
-    core_1.Output("ready"),
-    __metadata("design:type", Object)
-], NgvasComponent.prototype, "ready", void 0);
-__decorate([
-    core_1.Input("width"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasComponent.prototype, "width", null);
-__decorate([
-    core_1.Input("height"),
-    __metadata("design:type", Number),
-    __metadata("design:paramtypes", [Number])
-], NgvasComponent.prototype, "height", null);
-__decorate([
-    core_1.Input("active"),
-    __metadata("design:type", Boolean),
-    __metadata("design:paramtypes", [Boolean])
-], NgvasComponent.prototype, "active", null);
-NgvasComponent = __decorate([
-    core_1.Component({
-        // moduleId: String(module.id),
-        selector: "ngvas",
-        template: "<ng-content></ng-content><canvas #ngvasCanvas></canvas>",
-        styles: [":not(canvas) { display: none; }"],
-    }),
-    __param(0, core_1.Inject(core_1.Renderer2)),
-    __metadata("design:paramtypes", [core_1.Renderer2])
-], NgvasComponent);
 exports.NgvasComponent = NgvasComponent;
 //# sourceMappingURL=ngvas.component.js.map
 

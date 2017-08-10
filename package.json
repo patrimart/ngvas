@@ -5,11 +5,11 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "compile-lib": "rm -rf lib/* && tsc",
+    "compile-lib": "rm -rf lib/* && ngc -p tsconfig.ngc.json",
     "webpack-canvas": "webpack --display-modules=true --target=node ./webpack.canvas.js ./bundle/canvas.min.js",
     "webpack-ngvas": "webpack --config=./webpack.ngvas.js",
     "server": "./node_modules/http-server/bin/http-server -e ts",
-    "compile-lib-es6": "rm -rf lib/* && tsc --target es6",
+    "compile-lib-es6": "rm -rf lib/* && ngc -p tsconfig.ngc.json --target es6",
     "webpack-canvas-es6": "webpack ./lib/canvas/index.js ./bundle/canvas.es6.min.js",
     "webpack-ngvas-es6": "webpack --config=./webpack.ngvas.js --output-filename=ngvas.es6.umd.js",
     "bundle": "npm run compile-lib && npm run webpack-canvas && npm run webpack-ngvas"

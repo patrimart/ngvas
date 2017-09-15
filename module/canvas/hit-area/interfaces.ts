@@ -3,7 +3,7 @@ import { ContextTransformer } from "../shapes/interfaces";
 import { ITraceable }         from "../styles/interfaces";
 
 
-export type HitAreaConstructor<T extends IHitArea> = { new (...args: any[]): IHitArea };
+export type HitAreaConstructor<T extends IHitArea> = { new (...args: any[]): T };
 
 
 export interface IHitArea {

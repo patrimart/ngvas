@@ -1,6 +1,5 @@
 
 import { NgModule }      from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
 import { CommonModule }  from "@angular/common";
 
 import { NgvasComponent }               from "./components/ngvas.component";
@@ -17,7 +16,6 @@ import { NgvasTextComponent }           from "./components/ngvas-text.component"
 
 @NgModule({
     imports: [
-        BrowserModule,
         CommonModule,
     ],
     declarations: [

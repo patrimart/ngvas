@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("@angular/core"), require("@angular/common"), require("@angular/platform-browser"));
+		module.exports = factory(require("@angular/core"), require("@angular/common"));
 	else if(typeof define === 'function' && define.amd)
-		define(["@angular/core", "@angular/common", "@angular/platform-browser"], factory);
+		define(["@angular/core", "@angular/common"], factory);
 	else if(typeof exports === 'object')
-		exports["ngvas"] = factory(require("@angular/core"), require("@angular/common"), require("@angular/platform-browser"));
+		exports["ngvas"] = factory(require("@angular/core"), require("@angular/common"));
 	else
-		root["ngvas"] = factory(root["@angular/core"], root["@angular/common"], root["@angular/platform-browser"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_35__, __WEBPACK_EXTERNAL_MODULE_36__) {
+		root["ngvas"] = factory(root["@angular/core"], root["@angular/common"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_25__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -16,9 +16,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-/******/
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -42,9 +42,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
 /******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
@@ -73,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 34);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -89,9 +86,9 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const BaseShape_1 = __webpack_require__(7);
+const BaseShape_1 = __webpack_require__(5);
 const StyleManager_1 = __webpack_require__(21);
-const color_style_parser_1 = __webpack_require__(18);
+const color_style_parser_1 = __webpack_require__(8);
 const StyleTweenHelper_1 = __webpack_require__(22);
 /**
  * Draws a filled and/or stroked rectangle.
@@ -459,95 +456,6 @@ exports.NgvasBaseComponent = NgvasBaseComponent;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Group_1 = __webpack_require__(20);
-const canvasCtxt = Object.freeze({
-    scaleX: 1, scaleY: 1, skewX: 0, skewY: 0, moveX: 0, moveY: 0, rotate: 0,
-});
-function createOffscreenCanvas(canvas) {
-    const c = document.createElement("canvas");
-    c.width = canvas.width;
-    c.height = canvas.height;
-    return c;
-}
-class CanvasGroup extends Group_1.Group {
-    constructor(canvas, offscreenCanvas = createOffscreenCanvas(canvas), isActive = false) {
-        // as any disables null check.
-        super(canvas, offscreenCanvas.getContext("2d"), canvas.id || "CanvasGroup");
-        this._reqAniFrameId = 0;
-        super.isActive = isActive;
-        this.width = canvas.width;
-        this.height = canvas.height;
-        // Async so other shapes can be added before first draw.
-        this._reqAniFrameId = window.requestAnimationFrame(() => this.draw(canvasCtxt));
-    }
-    redraw() {
-        this.draw(canvasCtxt);
-    }
-    get context() {
-        return this.ctx;
-    }
-    get isActive() {
-        return super.isActive;
-    }
-    set isActive(v) {
-        if (super.isActive === false && v === true) {
-            this._reqAniFrameId = window.requestAnimationFrame(() => this.draw(canvasCtxt));
-        }
-        else {
-            window.cancelAnimationFrame(this._reqAniFrameId);
-            this._reqAniFrameId = 0;
-        }
-        super.isActive = v;
-    }
-    draw(ctxt) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        super.draw(ctxt);
-        this.canvas.getContext("2d").putImageData(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height), 0, 0);
-        if (this.isActive) {
-            this._reqAniFrameId = window.requestAnimationFrame(() => this.draw(canvasCtxt));
-        }
-    }
-    isHit() {
-        return true;
-    }
-}
-exports.CanvasGroup = CanvasGroup;
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-// requestAnimationFrame polyfill by Erik Möller
-// fixes from Paul Irish and Tino Zijdel
-(function () {
-    let lastTime = 0;
-    const vendors = ["ms", "moz", "webkit", "o"];
-    for (let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];
-        window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"]
-            || window[vendors[x] + "CancelRequestAnimationFrame"];
-    }
-    if (!window.requestAnimationFrame) {
-        window.requestAnimationFrame = function (callback) {
-            const currTime = new Date().getTime();
-            const timeToCall = Math.max(0, 16 - (currTime - lastTime));
-            const id = window.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
-            lastTime = currTime + timeToCall;
-            return id;
-        };
-    }
-    if (!window.cancelAnimationFrame) {
-        window.cancelAnimationFrame = function (id) {
-            clearTimeout(id);
-        };
-    }
-}());
-//# sourceMappingURL=CanvasGroup.js.map
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 const DEG_TO_ANGLE = 0.017453; // Math.PI / 180
 /**
  * Pixel-accurate Hit Area class.
@@ -596,103 +504,15 @@ exports.PixelHitArea = PixelHitArea;
 //# sourceMappingURL=PixelHitArea.js.map
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const interfaces_1 = __webpack_require__(2);
-const BaseStyle_1 = __webpack_require__(1);
-const DEG_TO_ANGLE = 0.017453; // Math.PI / 180
-/**
- * Draws a filled and/or stroked arc.
- */
-class ArcShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "Arc_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-        this._angleDegree = 180;
-        this._connectToCenter = false;
-    }
-    get type() { return interfaces_1.ShapeType.LINE; }
-    set radius(r) {
-        this.boundary.reset();
-        this.boundary.setPoint([-r, -r]);
-        this.boundary.setPoint([r, r]);
-        if (this.originToCenter) {
-            this.originToCenter = true;
-        }
-    }
-    get radius() {
-        return this.width / 2;
-    }
-    set angle(deg) {
-        this._angleDegree = Math.max(0, Math.min(360, deg));
-    }
-    get angle() {
-        return this._angleDegree;
-    }
-    withRadius(r, duration = 0, tween, callback) {
-        if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback, 5);
-        }
-        else {
-            this.radius = r;
-        }
-        return this;
-    }
-    withAngle(deg, duration = 0, tween, callback) {
-        if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [deg], ["angle"], callback, 10);
-        }
-        else {
-            this.angle = deg;
-        }
-        return this;
-    }
-    connectToCenter(c) {
-        this._connectToCenter = c;
-        return this;
-    }
-    traceShape(ctx) {
-        ctx.beginPath();
-        if (this._connectToCenter) {
-            ctx.moveTo(0 - this.originX, 0 - this.originY);
-        }
-        ctx.arc(0 - this.originX, 0 - this.originY, this.radius, 0, DEG_TO_ANGLE * this._angleDegree);
-        if (this._connectToCenter) {
-            ctx.lineTo(0 - this.originX, 0 - this.originY);
-        }
-        if (this.styleManager.hasFill) {
-            ctx.fill();
-        }
-        if (this.styleManager.hasStroke) {
-            ctx.stroke();
-        }
-    }
-    clear() {
-        super.clear();
-        this._angleDegree = 180;
-        this._connectToCenter = false;
-        return this;
-    }
-    customDraw() {
-        this.traceShape(this.ctx);
-    }
-}
-exports.ArcShape = ArcShape;
-//# sourceMappingURL=ArcShape.js.map
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const PixelHitArea_1 = __webpack_require__(5);
-const TweenManager_1 = __webpack_require__(23);
-const Boundary_1 = __webpack_require__(17);
+const PixelHitArea_1 = __webpack_require__(4);
+const TweenManager_1 = __webpack_require__(20);
+const Boundary_1 = __webpack_require__(7);
 const DEG_TO_ANGLE = 0.017453; // Math.PI / 180
 /**
  * BaseShape abstract class.
@@ -978,470 +798,11 @@ exports.BaseShape = BaseShape;
 //# sourceMappingURL=BaseShape.js.map
 
 /***/ }),
-/* 8 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-const BaseStyle_1 = __webpack_require__(1);
-const interfaces_1 = __webpack_require__(2);
-const Boundary_1 = __webpack_require__(17);
-/**
- * Draws a stroked line.
- */
-class BezierCurveShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "BezierCurve_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-        this._curves = [];
-        this._boundary = new Boundary_1.Boundary();
-    }
-    get type() { return interfaces_1.ShapeType.LINE; }
-    get width() { return this._boundary.width; }
-    get height() { return this._boundary.height; }
-    get numCurves() {
-        return this._curves.length;
-    }
-    addCurve(curve) {
-        this._curves.push(curve);
-        const [p1, cp1, cp2, p2] = curve;
-        this._boundary.setPoint(p1);
-        this._boundary.setPoint(p2);
-        this._boundary.setPoint([(p1[0] + cp1[0] + cp2[0] + p2[0]) / 4, (p1[0] + cp1[0] + cp2[0] + p2[0]) / 4]);
-        if (this.originToCenter) {
-            this.originToCenter = true;
-        }
-        return this;
-    }
-    clear() {
-        super.clear();
-        this._curves = [];
-        return this;
-    }
-    traceShape(ctx) {
-        if (this._curves.length < 1) {
-            throw new ReferenceError(`BezierCurveShape (${this.name}) must have at least one Point.`);
-        }
-        const [[[x, y], [x2, y2], [x3, y3], [x4, y4]], ...curvesTo] = this._curves;
-        ctx.beginPath();
-        ctx.moveTo(x - this.originX, y - this.originY);
-        ctx.bezierCurveTo(x2 - this.originX, y2 - this.originY, x3 - this.originX, y3 - this.originY, x4 - this.originX, y4 - this.originY);
-        if (curvesTo !== undefined) {
-            curvesTo.forEach(([, [_x2, _y2], [_x3, _y3], [_x4, _y4]]) => ctx.bezierCurveTo(_x2 - this.originX, _y2 - this.originY, _x3 - this.originX, _y3 - this.originY, _x4 - this.originX, _y4 - this.originY));
-        }
-        if (this.styleManager.hasFill) {
-            ctx.fill();
-        }
-        if (this.styleManager.hasStroke) {
-            ctx.stroke();
-        }
-    }
-    customDraw() {
-        this.traceShape(this.ctx);
-    }
-}
-exports.BezierCurveShape = BezierCurveShape;
-//# sourceMappingURL=BezierCurveShape.js.map
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const interfaces_1 = __webpack_require__(2);
-const BaseStyle_1 = __webpack_require__(1);
-const MathPIx2 = 6.2832; // 2 * Math.PI;
-/**
- * Draws a filled and/or stroked circle.
- */
-class CircleShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "Circle_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-    }
-    get type() { return interfaces_1.ShapeType.SHAPE; }
-    set width(v) { throw new ReferenceError(`LineShape width cannot be set (${v}).`); }
-    set height(v) { throw new ReferenceError(`LineShape height cannot be set (${v}).`); }
-    set radius(r) {
-        this.boundary.reset();
-        this.boundary.setPoint([-r, -r]);
-        this.boundary.setPoint([r, r]);
-        if (this.originToCenter) {
-            this.originToCenter = true;
-        }
-    }
-    get radius() {
-        return super.width / 2;
-    }
-    withRadius(r, duration = 0, tween, callback) {
-        if (duration > 1) {
-            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback, 5);
-        }
-        else {
-            this.radius = r;
-        }
-        return this;
-    }
-    traceShape(ctx) {
-        ctx.beginPath();
-        ctx.arc(0 - this.originX, 0 - this.originY, this.radius, 0, MathPIx2);
-        if (this.styleManager.hasFill) {
-            ctx.fill();
-        }
-        if (this.styleManager.hasStroke) {
-            ctx.stroke();
-        }
-    }
-    customDraw() {
-        this.traceShape(this.ctx);
-    }
-}
-exports.CircleShape = CircleShape;
-//# sourceMappingURL=CircleShape.js.map
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const BaseStyle_1 = __webpack_require__(1);
-const interfaces_1 = __webpack_require__(2);
-/**
- * Draws a filled and/or stroked line of text.
- */
-class ImageShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "Image_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-    }
-    get type() { return interfaces_1.ShapeType.IMAGE; }
-    withImage(img, callback) {
-        this._image = new Image();
-        this._image.src = img;
-        if (callback !== undefined) {
-            this._image.addEventListener("load", () => callback(this));
-        }
-        return this;
-    }
-    getImage() {
-        return this._image;
-    }
-    traceShape(ctx) {
-        ctx.fillRect(0 - this.originX, 0 - this.originY, this.width, this.height);
-    }
-    customDraw() {
-        this.ctx.drawImage(this._image, 0 - this.originX, 0 - this.originY, this.width, this.height);
-    }
-}
-exports.ImageShape = ImageShape;
-//# sourceMappingURL=ImageShape.js.map
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const BaseStyle_1 = __webpack_require__(1);
-const interfaces_1 = __webpack_require__(2);
-/**
- * Draws a stroked line.
- */
-class LineShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "Line_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-        this._linePoints = [];
-    }
-    get type() { return interfaces_1.ShapeType.LINE; }
-    set width(v) { throw new ReferenceError(`LineShape width cannot be set (${v}).`); }
-    set height(v) { throw new ReferenceError(`LineShape height cannot be set (${v}).`); }
-    addLine(line) {
-        this._linePoints.push(line);
-        this.boundary.setPoint(line[0]);
-        this.boundary.setPoint(line[1]);
-        if (this.originToCenter) {
-            this.originToCenter = true;
-        }
-        return this;
-    }
-    clear() {
-        super.clear();
-        this._linePoints = [];
-        return this;
-    }
-    traceShape(ctx) {
-        if (this._linePoints.length < 1) {
-            throw new ReferenceError(`LineShape (${this.name}) must have at least one line.`);
-        }
-        ctx.beginPath();
-        this._linePoints.forEach(([[x, y], [x2, y2]], i) => {
-            if (i === 0) {
-                ctx.moveTo(x - this.originX, y - this.originY);
-            }
-            ctx.lineTo(x2 - this.originX, y2 - this.originY);
-        });
-        if (this.styleManager.hasFill) {
-            ctx.fill();
-        }
-        if (this.styleManager.hasStroke) {
-            ctx.stroke();
-        }
-    }
-    customDraw() {
-        this.traceShape(this.ctx);
-    }
-}
-exports.LineShape = LineShape;
-//# sourceMappingURL=LineShape.js.map
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const interfaces_1 = __webpack_require__(2);
-const BaseStyle_1 = __webpack_require__(1);
-/**
- * Draws a filled and/or stroked polygon.
- */
-class PolyShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "PolyShape_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-        this._sidesCollection = [];
-    }
-    get type() { return interfaces_1.ShapeType.SHAPE; }
-    get width() { return this.boundary.width; }
-    get height() { return this.boundary.height; }
-    addLine(line) {
-        this._sidesCollection.push(line);
-        this.boundary.setPoint(line[0]);
-        this.boundary.setPoint(line[1]);
-        if (this.originToCenter) {
-            this.originToCenter = true;
-        }
-        return this;
-    }
-    addBezier(curve) {
-        this._sidesCollection.push(curve);
-        const [p1, cp1, cp2, p2] = curve;
-        this.boundary.setPoint(p1);
-        this.boundary.setPoint(p2);
-        this.boundary.setPoint([(p1[0] + cp1[0] + cp2[0] + p2[0]) / 4, (p1[0] + cp1[0] + cp2[0] + p2[0]) / 4]);
-        if (this.originToCenter) {
-            this.originToCenter = true;
-        }
-        return this;
-    }
-    addQuadratic(curve) {
-        this._sidesCollection.push(curve);
-        const [p1, cp1, p2] = curve;
-        this.boundary.setPoint(p1);
-        this.boundary.setPoint(p2);
-        this.boundary.setPoint([(p1[0] + cp1[0] + p2[0]) / 3, (p1[0] + cp1[0] + p2[0]) / 3]);
-        if (this.originToCenter) {
-            this.originToCenter = true;
-        }
-        return this;
-    }
-    clear() {
-        this.boundary.reset();
-        this._sidesCollection = [];
-        return this;
-    }
-    traceShape(ctx) {
-        if (this._sidesCollection.length < 2) {
-            throw new ReferenceError(`PolyShape (${this.name}) must have at least two sides.`);
-        }
-        const [[x, y],] = this._sidesCollection[0];
-        ctx.beginPath();
-        ctx.moveTo(x - this.originX, y - this.originY);
-        this._sidesCollection.forEach(s => {
-            // Line
-            if (s.length === 2) {
-                const [, [x2, y2]] = s;
-                ctx.lineTo(x2 - this.originX, y2 - this.originY);
-                // Quadratic
-            }
-            else if (s.length === 3) {
-                const [, [x2, y2], [x3, y3]] = s.slice(0, 3);
-                ctx.quadraticCurveTo(x2 - this.originX, y2 - this.originY, x3 - this.originX, y3 - this.originY);
-                // Bezier
-            }
-            else if (s.length === 4) {
-                const [, [x2, y2], [x3, y3], [x4, y4]] = s.slice(0, 4);
-                ctx.bezierCurveTo(x2 - this.originX, y2 - this.originY, x3 - this.originX, y3 - this.originY, x4 - this.originX, y4 - this.originY);
-            }
-        });
-        ctx.closePath();
-        if (this.styleManager.hasFill) {
-            ctx.fill();
-        }
-        if (this.styleManager.hasStroke) {
-            ctx.stroke();
-        }
-    }
-    customDraw() {
-        this.traceShape(this.ctx);
-    }
-}
-exports.PolyShape = PolyShape;
-//# sourceMappingURL=PolyShape.js.map
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const BaseStyle_1 = __webpack_require__(1);
-const interfaces_1 = __webpack_require__(2);
-/**
- * Draws a stroked line.
- */
-class QuadraticCurveShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "QuadraticCurve_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-        this._curves = [];
-    }
-    get type() { return interfaces_1.ShapeType.SHAPE; }
-    get numCurves() {
-        return this._curves.length;
-    }
-    addCurve(curve) {
-        this._curves.push(curve);
-        const [p1, cp1, p2] = curve;
-        this.boundary.setPoint(p1);
-        this.boundary.setPoint(p2);
-        this.boundary.setPoint([(p1[0] + cp1[0] + p2[0]) / 3, (p1[0] + cp1[0] + p2[0]) / 3]);
-        if (this.originToCenter) {
-            this.originToCenter = true;
-        }
-        return this;
-    }
-    clear() {
-        super.clear();
-        this._curves = [];
-        return this;
-    }
-    traceShape(ctx) {
-        if (this._curves.length < 1) {
-            throw new ReferenceError(`QuadraticCurveShape (${this.name}) must have at least one Point.`);
-        }
-        const [[[x, y], [x2, y2], [x3, y3]], ...curvesTo] = this._curves;
-        ctx.beginPath();
-        ctx.moveTo(x - this.originX, y - this.originY);
-        ctx.quadraticCurveTo(x2 - this.originX, y2 - this.originY, x3 - this.originX, y3 - this.originY);
-        if (curvesTo !== undefined) {
-            curvesTo.forEach(([, [_x2, _y2], [_x3, _y3]]) => ctx.quadraticCurveTo(_x2 - this.originX, _y2 - this.originY, _x3 - this.originX, _y3 - this.originY));
-        }
-        if (this.styleManager.hasFill) {
-            ctx.fill();
-        }
-        if (this.styleManager.hasStroke) {
-            ctx.stroke();
-        }
-    }
-    customDraw() {
-        this.traceShape(this.ctx);
-    }
-}
-exports.QuadraticCurveShape = QuadraticCurveShape;
-//# sourceMappingURL=QuadraticCurveShape.js.map
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const BaseStyle_1 = __webpack_require__(1);
-const interfaces_1 = __webpack_require__(2);
-/**
- * Draws a filled and/or stroked rectangle.
- */
-class RectShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "Rect_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-    }
-    get type() { return interfaces_1.ShapeType.SHAPE; }
-    traceShape(ctx) {
-        if (this.styleManager.hasFill) {
-            ctx.fillRect(0 - this.originX, 0 - this.originY, this.width, this.height);
-        }
-        if (this.styleManager.hasStroke) {
-            ctx.strokeRect(0 - this.originX, 0 - this.originY, this.width, this.height);
-        }
-    }
-    customDraw() {
-        this.traceShape(this.ctx);
-    }
-}
-exports.RectShape = RectShape;
-//# sourceMappingURL=RectShape.js.map
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const BaseStyle_1 = __webpack_require__(1);
-const interfaces_1 = __webpack_require__(2);
-/**
- * Draws a filled and/or stroked line of text.
- */
-class TextShape extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name = "Text_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
-        super(canvas, ctx, name);
-        this._text = "";
-    }
-    get type() { return interfaces_1.ShapeType.TEXT; }
-    withText(text, maxWidth) {
-        this._maxWidth = maxWidth;
-        this.text = text;
-        return this;
-    }
-    set text(text) {
-        this._text = text;
-        this.styleManager.begin();
-        this.width = this._maxWidth || this.ctx.measureText(this._text).width;
-        this.styleManager.end();
-    }
-    get text() {
-        return this._text;
-    }
-    textStyle(font, align, baseline) {
-        this.styleManager.textStyle(font, align, baseline);
-        return this;
-    }
-    traceShape(ctx) {
-        ctx.fillRect(0 - this.originX, 0 - this.originY, this.width, this.height);
-    }
-    customDraw() {
-        if (this.styleManager.hasFill) {
-            this.ctx.fillText(this.text, 0 - this.originX, 0 - this.originY, this._maxWidth);
-        }
-        if (this.styleManager.hasStroke) {
-            this.ctx.strokeText(this.text, 0 - this.originX, 0 - this.originY, this._maxWidth);
-        }
-    }
-}
-exports.TextShape = TextShape;
-//# sourceMappingURL=TextShape.js.map
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 /*
     TERMS OF USE - EASING EQUATIONS
     ---------------------------------------------------------------------------------
@@ -1468,7 +829,6 @@ exports.TextShape = TextShape;
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     ---------------------------------------------------------------------------------
 */
-
 Object.defineProperty(exports, "__esModule", { value: true });
 const PI_M2 = 6.2832; // Math.PI * 2;
 const PI_D2 = 1.5708; // Math.PI / 2;
@@ -1742,7 +1102,7 @@ exports.easeInOutCubic = easeInOutCubic;
 //# sourceMappingURL=easing.js.map
 
 /***/ }),
-/* 17 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1789,7 +1149,7 @@ exports.Boundary = Boundary;
 //# sourceMappingURL=Boundary.js.map
 
 /***/ }),
-/* 18 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1839,63 +1199,689 @@ exports.toRgbaString = toRgbaString;
 //# sourceMappingURL=color-style-parser.js.map
 
 /***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Group_1 = __webpack_require__(23);
+const canvasCtxt = Object.freeze({
+    scaleX: 1, scaleY: 1, skewX: 0, skewY: 0, moveX: 0, moveY: 0, rotate: 0,
+});
+function createOffscreenCanvas(canvas) {
+    const c = document.createElement("canvas");
+    c.width = canvas.width;
+    c.height = canvas.height;
+    return c;
+}
+class CanvasGroup extends Group_1.Group {
+    constructor(canvas, offscreenCanvas = createOffscreenCanvas(canvas), isActive = false) {
+        // as any disables null check.
+        super(canvas, offscreenCanvas.getContext("2d"), canvas.id || "CanvasGroup");
+        this._reqAniFrameId = 0;
+        super.isActive = isActive;
+        this.width = canvas.width;
+        this.height = canvas.height;
+        // Async so other shapes can be added before first draw.
+        this._reqAniFrameId = window.requestAnimationFrame(() => this.draw(canvasCtxt));
+    }
+    redraw() {
+        this.draw(canvasCtxt);
+    }
+    get context() {
+        return this.ctx;
+    }
+    get isActive() {
+        return super.isActive;
+    }
+    set isActive(v) {
+        if (super.isActive === false && v === true) {
+            this._reqAniFrameId = window.requestAnimationFrame(() => this.draw(canvasCtxt));
+        }
+        else {
+            window.cancelAnimationFrame(this._reqAniFrameId);
+            this._reqAniFrameId = 0;
+        }
+        super.isActive = v;
+    }
+    draw(ctxt) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        super.draw(ctxt);
+        this.canvas.getContext("2d").putImageData(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height), 0, 0);
+        if (this.isActive) {
+            this._reqAniFrameId = window.requestAnimationFrame(() => this.draw(canvasCtxt));
+        }
+    }
+    isHit() {
+        return true;
+    }
+}
+exports.CanvasGroup = CanvasGroup;
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+// requestAnimationFrame polyfill by Erik Möller
+// fixes from Paul Irish and Tino Zijdel
+(function () {
+    let lastTime = 0;
+    const vendors = ["ms", "moz", "webkit", "o"];
+    for (let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];
+        window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"]
+            || window[vendors[x] + "CancelRequestAnimationFrame"];
+    }
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function (callback) {
+            const currTime = new Date().getTime();
+            const timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            const id = window.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    }
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = function (id) {
+            clearTimeout(id);
+        };
+    }
+}());
+//# sourceMappingURL=CanvasGroup.js.map
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const interfaces_1 = __webpack_require__(2);
+const BaseStyle_1 = __webpack_require__(1);
+const DEG_TO_ANGLE = 0.017453; // Math.PI / 180
+/**
+ * Draws a filled and/or stroked arc.
+ */
+class ArcShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "Arc_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+        this._angleDegree = 180;
+        this._connectToCenter = false;
+    }
+    get type() { return interfaces_1.ShapeType.LINE; }
+    set radius(r) {
+        this.boundary.reset();
+        this.boundary.setPoint([-r, -r]);
+        this.boundary.setPoint([r, r]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
+    }
+    get radius() {
+        return this.width / 2;
+    }
+    set angle(deg) {
+        this._angleDegree = Math.max(0, Math.min(360, deg));
+    }
+    get angle() {
+        return this._angleDegree;
+    }
+    withRadius(r, duration = 0, tween, callback) {
+        if (duration > 1) {
+            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback, 5);
+        }
+        else {
+            this.radius = r;
+        }
+        return this;
+    }
+    withAngle(deg, duration = 0, tween, callback) {
+        if (duration > 1) {
+            this.tweenManager.addTween(this, tween, duration, [deg], ["angle"], callback, 10);
+        }
+        else {
+            this.angle = deg;
+        }
+        return this;
+    }
+    connectToCenter(c) {
+        this._connectToCenter = c;
+        return this;
+    }
+    traceShape(ctx) {
+        ctx.beginPath();
+        if (this._connectToCenter) {
+            ctx.moveTo(0 - this.originX, 0 - this.originY);
+        }
+        ctx.arc(0 - this.originX, 0 - this.originY, this.radius, 0, DEG_TO_ANGLE * this._angleDegree);
+        if (this._connectToCenter) {
+            ctx.lineTo(0 - this.originX, 0 - this.originY);
+        }
+        if (this.styleManager.hasFill) {
+            ctx.fill();
+        }
+        if (this.styleManager.hasStroke) {
+            ctx.stroke();
+        }
+    }
+    clear() {
+        super.clear();
+        this._angleDegree = 180;
+        this._connectToCenter = false;
+        return this;
+    }
+    customDraw() {
+        this.traceShape(this.ctx);
+    }
+}
+exports.ArcShape = ArcShape;
+//# sourceMappingURL=ArcShape.js.map
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const BaseStyle_1 = __webpack_require__(1);
+const interfaces_1 = __webpack_require__(2);
+const Boundary_1 = __webpack_require__(7);
+/**
+ * Draws a stroked line.
+ */
+class BezierCurveShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "BezierCurve_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+        this._curves = [];
+        this._boundary = new Boundary_1.Boundary();
+    }
+    get type() { return interfaces_1.ShapeType.LINE; }
+    get width() { return this._boundary.width; }
+    get height() { return this._boundary.height; }
+    get numCurves() {
+        return this._curves.length;
+    }
+    addCurve(curve) {
+        this._curves.push(curve);
+        const [p1, cp1, cp2, p2] = curve;
+        this._boundary.setPoint(p1);
+        this._boundary.setPoint(p2);
+        this._boundary.setPoint([(p1[0] + cp1[0] + cp2[0] + p2[0]) / 4, (p1[0] + cp1[0] + cp2[0] + p2[0]) / 4]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
+        return this;
+    }
+    clear() {
+        super.clear();
+        this._curves = [];
+        return this;
+    }
+    traceShape(ctx) {
+        if (this._curves.length < 1) {
+            throw new ReferenceError(`BezierCurveShape (${this.name}) must have at least one Point.`);
+        }
+        const [[[x, y], [x2, y2], [x3, y3], [x4, y4]], ...curvesTo] = this._curves;
+        ctx.beginPath();
+        ctx.moveTo(x - this.originX, y - this.originY);
+        ctx.bezierCurveTo(x2 - this.originX, y2 - this.originY, x3 - this.originX, y3 - this.originY, x4 - this.originX, y4 - this.originY);
+        if (curvesTo !== undefined) {
+            curvesTo.forEach(([, [_x2, _y2], [_x3, _y3], [_x4, _y4]]) => ctx.bezierCurveTo(_x2 - this.originX, _y2 - this.originY, _x3 - this.originX, _y3 - this.originY, _x4 - this.originX, _y4 - this.originY));
+        }
+        if (this.styleManager.hasFill) {
+            ctx.fill();
+        }
+        if (this.styleManager.hasStroke) {
+            ctx.stroke();
+        }
+    }
+    customDraw() {
+        this.traceShape(this.ctx);
+    }
+}
+exports.BezierCurveShape = BezierCurveShape;
+//# sourceMappingURL=BezierCurveShape.js.map
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const interfaces_1 = __webpack_require__(2);
+const BaseStyle_1 = __webpack_require__(1);
+const MathPIx2 = 6.2832; // 2 * Math.PI;
+/**
+ * Draws a filled and/or stroked circle.
+ */
+class CircleShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "Circle_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+    }
+    get type() { return interfaces_1.ShapeType.SHAPE; }
+    set width(v) { throw new ReferenceError(`LineShape width cannot be set (${v}).`); }
+    set height(v) { throw new ReferenceError(`LineShape height cannot be set (${v}).`); }
+    set radius(r) {
+        this.boundary.reset();
+        this.boundary.setPoint([-r, -r]);
+        this.boundary.setPoint([r, r]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
+    }
+    get radius() {
+        return super.width / 2;
+    }
+    withRadius(r, duration = 0, tween, callback) {
+        if (duration > 1) {
+            this.tweenManager.addTween(this, tween, duration, [r], ["radius"], callback, 5);
+        }
+        else {
+            this.radius = r;
+        }
+        return this;
+    }
+    traceShape(ctx) {
+        ctx.beginPath();
+        ctx.arc(0 - this.originX, 0 - this.originY, this.radius, 0, MathPIx2);
+        if (this.styleManager.hasFill) {
+            ctx.fill();
+        }
+        if (this.styleManager.hasStroke) {
+            ctx.stroke();
+        }
+    }
+    customDraw() {
+        this.traceShape(this.ctx);
+    }
+}
+exports.CircleShape = CircleShape;
+//# sourceMappingURL=CircleShape.js.map
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const BaseStyle_1 = __webpack_require__(1);
+const interfaces_1 = __webpack_require__(2);
+/**
+ * Draws a filled and/or stroked line of text.
+ */
+class ImageShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "Image_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+    }
+    get type() { return interfaces_1.ShapeType.IMAGE; }
+    withImage(img, callback) {
+        this._image = new Image();
+        this._image.src = img;
+        if (callback !== undefined) {
+            this._image.addEventListener("load", () => callback(this));
+        }
+        return this;
+    }
+    getImage() {
+        return this._image;
+    }
+    traceShape(ctx) {
+        ctx.fillRect(0 - this.originX, 0 - this.originY, this.width, this.height);
+    }
+    customDraw() {
+        this.ctx.drawImage(this._image, 0 - this.originX, 0 - this.originY, this.width, this.height);
+    }
+}
+exports.ImageShape = ImageShape;
+//# sourceMappingURL=ImageShape.js.map
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const BaseStyle_1 = __webpack_require__(1);
+const interfaces_1 = __webpack_require__(2);
+/**
+ * Draws a stroked line.
+ */
+class LineShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "Line_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+        this._linePoints = [];
+    }
+    get type() { return interfaces_1.ShapeType.LINE; }
+    set width(v) { throw new ReferenceError(`LineShape width cannot be set (${v}).`); }
+    set height(v) { throw new ReferenceError(`LineShape height cannot be set (${v}).`); }
+    addLine(line) {
+        this._linePoints.push(line);
+        this.boundary.setPoint(line[0]);
+        this.boundary.setPoint(line[1]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
+        return this;
+    }
+    clear() {
+        super.clear();
+        this._linePoints = [];
+        return this;
+    }
+    traceShape(ctx) {
+        if (this._linePoints.length < 1) {
+            throw new ReferenceError(`LineShape (${this.name}) must have at least one line.`);
+        }
+        ctx.beginPath();
+        this._linePoints.forEach(([[x, y], [x2, y2]], i) => {
+            if (i === 0) {
+                ctx.moveTo(x - this.originX, y - this.originY);
+            }
+            ctx.lineTo(x2 - this.originX, y2 - this.originY);
+        });
+        if (this.styleManager.hasFill) {
+            ctx.fill();
+        }
+        if (this.styleManager.hasStroke) {
+            ctx.stroke();
+        }
+    }
+    customDraw() {
+        this.traceShape(this.ctx);
+    }
+}
+exports.LineShape = LineShape;
+//# sourceMappingURL=LineShape.js.map
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const interfaces_1 = __webpack_require__(2);
+const BaseStyle_1 = __webpack_require__(1);
+/**
+ * Draws a filled and/or stroked polygon.
+ */
+class PolyShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "PolyShape_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+        this._sidesCollection = [];
+    }
+    get type() { return interfaces_1.ShapeType.SHAPE; }
+    get width() { return this.boundary.width; }
+    get height() { return this.boundary.height; }
+    addLine(line) {
+        this._sidesCollection.push(line);
+        this.boundary.setPoint(line[0]);
+        this.boundary.setPoint(line[1]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
+        return this;
+    }
+    addBezier(curve) {
+        this._sidesCollection.push(curve);
+        const [p1, cp1, cp2, p2] = curve;
+        this.boundary.setPoint(p1);
+        this.boundary.setPoint(p2);
+        this.boundary.setPoint([(p1[0] + cp1[0] + cp2[0] + p2[0]) / 4, (p1[0] + cp1[0] + cp2[0] + p2[0]) / 4]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
+        return this;
+    }
+    addQuadratic(curve) {
+        this._sidesCollection.push(curve);
+        const [p1, cp1, p2] = curve;
+        this.boundary.setPoint(p1);
+        this.boundary.setPoint(p2);
+        this.boundary.setPoint([(p1[0] + cp1[0] + p2[0]) / 3, (p1[0] + cp1[0] + p2[0]) / 3]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
+        return this;
+    }
+    clear() {
+        this.boundary.reset();
+        this._sidesCollection = [];
+        return this;
+    }
+    traceShape(ctx) {
+        if (this._sidesCollection.length < 2) {
+            throw new ReferenceError(`PolyShape (${this.name}) must have at least two sides.`);
+        }
+        const [[x, y],] = this._sidesCollection[0];
+        ctx.beginPath();
+        ctx.moveTo(x - this.originX, y - this.originY);
+        this._sidesCollection.forEach(s => {
+            // Line
+            if (s.length === 2) {
+                const [, [x2, y2]] = s;
+                ctx.lineTo(x2 - this.originX, y2 - this.originY);
+                // Quadratic
+            }
+            else if (s.length === 3) {
+                const [, [x2, y2], [x3, y3]] = s.slice(0, 3);
+                ctx.quadraticCurveTo(x2 - this.originX, y2 - this.originY, x3 - this.originX, y3 - this.originY);
+                // Bezier
+            }
+            else if (s.length === 4) {
+                const [, [x2, y2], [x3, y3], [x4, y4]] = s.slice(0, 4);
+                ctx.bezierCurveTo(x2 - this.originX, y2 - this.originY, x3 - this.originX, y3 - this.originY, x4 - this.originX, y4 - this.originY);
+            }
+        });
+        ctx.closePath();
+        if (this.styleManager.hasFill) {
+            ctx.fill();
+        }
+        if (this.styleManager.hasStroke) {
+            ctx.stroke();
+        }
+    }
+    customDraw() {
+        this.traceShape(this.ctx);
+    }
+}
+exports.PolyShape = PolyShape;
+//# sourceMappingURL=PolyShape.js.map
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const BaseStyle_1 = __webpack_require__(1);
+const interfaces_1 = __webpack_require__(2);
+/**
+ * Draws a stroked line.
+ */
+class QuadraticCurveShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "QuadraticCurve_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+        this._curves = [];
+    }
+    get type() { return interfaces_1.ShapeType.SHAPE; }
+    get numCurves() {
+        return this._curves.length;
+    }
+    addCurve(curve) {
+        this._curves.push(curve);
+        const [p1, cp1, p2] = curve;
+        this.boundary.setPoint(p1);
+        this.boundary.setPoint(p2);
+        this.boundary.setPoint([(p1[0] + cp1[0] + p2[0]) / 3, (p1[0] + cp1[0] + p2[0]) / 3]);
+        if (this.originToCenter) {
+            this.originToCenter = true;
+        }
+        return this;
+    }
+    clear() {
+        super.clear();
+        this._curves = [];
+        return this;
+    }
+    traceShape(ctx) {
+        if (this._curves.length < 1) {
+            throw new ReferenceError(`QuadraticCurveShape (${this.name}) must have at least one Point.`);
+        }
+        const [[[x, y], [x2, y2], [x3, y3]], ...curvesTo] = this._curves;
+        ctx.beginPath();
+        ctx.moveTo(x - this.originX, y - this.originY);
+        ctx.quadraticCurveTo(x2 - this.originX, y2 - this.originY, x3 - this.originX, y3 - this.originY);
+        if (curvesTo !== undefined) {
+            curvesTo.forEach(([, [_x2, _y2], [_x3, _y3]]) => ctx.quadraticCurveTo(_x2 - this.originX, _y2 - this.originY, _x3 - this.originX, _y3 - this.originY));
+        }
+        if (this.styleManager.hasFill) {
+            ctx.fill();
+        }
+        if (this.styleManager.hasStroke) {
+            ctx.stroke();
+        }
+    }
+    customDraw() {
+        this.traceShape(this.ctx);
+    }
+}
+exports.QuadraticCurveShape = QuadraticCurveShape;
+//# sourceMappingURL=QuadraticCurveShape.js.map
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const BaseStyle_1 = __webpack_require__(1);
+const interfaces_1 = __webpack_require__(2);
+/**
+ * Draws a filled and/or stroked rectangle.
+ */
+class RectShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "Rect_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+    }
+    get type() { return interfaces_1.ShapeType.SHAPE; }
+    traceShape(ctx) {
+        if (this.styleManager.hasFill) {
+            ctx.fillRect(0 - this.originX, 0 - this.originY, this.width, this.height);
+        }
+        if (this.styleManager.hasStroke) {
+            ctx.strokeRect(0 - this.originX, 0 - this.originY, this.width, this.height);
+        }
+    }
+    customDraw() {
+        this.traceShape(this.ctx);
+    }
+}
+exports.RectShape = RectShape;
+//# sourceMappingURL=RectShape.js.map
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const BaseStyle_1 = __webpack_require__(1);
+const interfaces_1 = __webpack_require__(2);
+/**
+ * Draws a filled and/or stroked line of text.
+ */
+class TextShape extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name = "Text_" + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)) {
+        super(canvas, ctx, name);
+        this._text = "";
+    }
+    get type() { return interfaces_1.ShapeType.TEXT; }
+    withText(text, maxWidth) {
+        this._maxWidth = maxWidth;
+        this.text = text;
+        return this;
+    }
+    set text(text) {
+        this._text = text;
+        this.styleManager.begin();
+        this.width = this._maxWidth || this.ctx.measureText(this._text).width;
+        this.styleManager.end();
+    }
+    get text() {
+        return this._text;
+    }
+    textStyle(font, align, baseline) {
+        this.styleManager.textStyle(font, align, baseline);
+        return this;
+    }
+    traceShape(ctx) {
+        ctx.fillRect(0 - this.originX, 0 - this.originY, this.width, this.height);
+    }
+    customDraw() {
+        if (this.styleManager.hasFill) {
+            this.ctx.fillText(this.text, 0 - this.originX, 0 - this.originY, this._maxWidth);
+        }
+        if (this.styleManager.hasStroke) {
+            this.ctx.strokeText(this.text, 0 - this.originX, 0 - this.originY, this._maxWidth);
+        }
+    }
+}
+exports.TextShape = TextShape;
+//# sourceMappingURL=TextShape.js.map
+
+/***/ }),
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const platform_browser_1 = __webpack_require__(36);
-const common_1 = __webpack_require__(35);
-const ngvas_component_1 = __webpack_require__(33);
-const ngvas_arc_component_1 = __webpack_require__(24);
-const ngvas_bezier_component_1 = __webpack_require__(25);
-const ngvas_circle_component_1 = __webpack_require__(26);
-const ngvas_image_component_1 = __webpack_require__(27);
-const ngvas_line_component_1 = __webpack_require__(28);
-const ngvas_polygon_component_1 = __webpack_require__(29);
-const ngvas_quadratic_component_1 = __webpack_require__(30);
-const ngvas_rectange_component_1 = __webpack_require__(31);
-const ngvas_text_component_1 = __webpack_require__(32);
-class NgvasModule {
-}
-NgvasModule.decorators = [
-    { type: core_1.NgModule, args: [{
-                imports: [
-                    platform_browser_1.BrowserModule,
-                    common_1.CommonModule,
-                ],
-                declarations: [
-                    ngvas_component_1.NgvasComponent,
-                    ngvas_arc_component_1.NgvasArcComponent,
-                    ngvas_bezier_component_1.NgvasBezierCurveComponent,
-                    ngvas_circle_component_1.NgvasCircleComponent,
-                    ngvas_image_component_1.NgvasImageComponent,
-                    ngvas_line_component_1.NgvasLineComponent,
-                    ngvas_polygon_component_1.NgvasPolygonComponent,
-                    ngvas_quadratic_component_1.NgvasQuadraticCurveComponent,
-                    ngvas_rectange_component_1.NgvasRectangleComponent,
-                    ngvas_text_component_1.NgvasTextComponent,
-                ],
-                exports: [
-                    ngvas_component_1.NgvasComponent,
-                    ngvas_arc_component_1.NgvasArcComponent,
-                    ngvas_bezier_component_1.NgvasBezierCurveComponent,
-                    ngvas_circle_component_1.NgvasCircleComponent,
-                    ngvas_image_component_1.NgvasImageComponent,
-                    ngvas_line_component_1.NgvasLineComponent,
-                    ngvas_polygon_component_1.NgvasPolygonComponent,
-                    ngvas_quadratic_component_1.NgvasQuadraticCurveComponent,
-                    ngvas_rectange_component_1.NgvasRectangleComponent,
-                    ngvas_text_component_1.NgvasTextComponent,
-                ],
-            },] },
-];
-/** @nocollapse */
-NgvasModule.ctorParameters = () => [];
-exports.NgvasModule = NgvasModule;
-//# sourceMappingURL=ngvas.module.js.map
+const PixelHitArea_1 = __webpack_require__(4);
+const BaseStyle_1 = __webpack_require__(1);
+const _tweenEasings = __webpack_require__(6);
+const CanvasGroup_1 = __webpack_require__(9);
+const ArcShape_1 = __webpack_require__(10);
+const BaseShape_1 = __webpack_require__(5);
+const BezierCurveShape_1 = __webpack_require__(11);
+const CircleShape_1 = __webpack_require__(12);
+const ImageShape_1 = __webpack_require__(13);
+const LineShape_1 = __webpack_require__(14);
+const PolyShape_1 = __webpack_require__(15);
+const QuadraticCurveShape_1 = __webpack_require__(16);
+const RectShape_1 = __webpack_require__(17);
+const TextShape_1 = __webpack_require__(18);
+var ngvas_module_1 = __webpack_require__(24);
+exports.NgvasModule = ngvas_module_1.NgvasModule;
+var hitAreas;
+(function (hitAreas) {
+    hitAreas.PixelHitArea = PixelHitArea_1.PixelHitArea;
+})(hitAreas = exports.hitAreas || (exports.hitAreas = {}));
+var tweens;
+(function (tweens) {
+    tweens.easings = _tweenEasings;
+})(tweens = exports.tweens || (exports.tweens = {}));
+var shapes;
+(function (shapes) {
+    shapes.BaseShape = BaseShape_1.BaseShape;
+    shapes.BaseStyle = BaseStyle_1.BaseStyle;
+    shapes.CanvasGroup = CanvasGroup_1.CanvasGroup;
+    shapes.ArcShape = ArcShape_1.ArcShape;
+    shapes.BezierCurveShape = BezierCurveShape_1.BezierCurveShape;
+    shapes.CircleShape = CircleShape_1.CircleShape;
+    shapes.ImageShape = ImageShape_1.ImageShape;
+    shapes.LineShape = LineShape_1.LineShape;
+    shapes.PolyShape = PolyShape_1.PolyShape;
+    shapes.QuadraticCurveShape = QuadraticCurveShape_1.QuadraticCurveShape;
+    shapes.RectShape = RectShape_1.RectShape;
+    shapes.TextShape = TextShape_1.TextShape;
+})(shapes = exports.shapes || (exports.shapes = {}));
+//# sourceMappingURL=index.js.map
 
 /***/ }),
 /* 20 */
@@ -1904,75 +1890,65 @@ exports.NgvasModule = NgvasModule;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const interfaces_1 = __webpack_require__(2);
-const BaseStyle_1 = __webpack_require__(1);
-class Group extends BaseStyle_1.BaseStyle {
-    constructor(canvas, ctx, name) {
-        super(canvas, ctx, name);
-        // Render children from high to 0 index.
-        this._children = [];
-        this.__isVisible = true;
-        this.__isActive = true;
+const easing_1 = __webpack_require__(6);
+class TweenManager {
+    constructor() {
+        this._collection = [];
     }
-    get type() {
-        return interfaces_1.ShapeType.GROUP;
+    // private _preExecutor: Function[] = [];
+    // private _postExecutor: Function[] = [];
+    /**
+     * Execute tweens.
+     */
+    tween() {
+        // this._preExecutor.forEach(e => e());
+        this._collection = this._collection.filter(f => f());
+        // this._postExecutor.forEach(e => e());
     }
-    get isActive() { return this.__isActive; }
-    set isActive(v) { this.__isActive = v; }
-    get isVisible() { return this.__isVisible; }
-    set isVisible(v) { this.__isVisible = v; }
-    withText() {
-        throw new Error("This method is not supported in StyleManager.");
+    clear() {
+        this._collection = [];
+        // this._preExecutor = [];
+        // this._postExecutor = [];
     }
-    numChildren() {
-        return this._children.length;
-    }
-    addChild(shape) {
-        this._children.push(shape);
-        return this;
-    }
-    removeChild(shape) {
-        this._children = this._children.filter(s => s === shape);
-        return this;
-    }
-    removeChildAt(index) {
-        const child = this._children[index];
-        this._children = this._children.filter(s => s !== child);
-        return child;
-    }
-    removeAllChildren() {
-        this._children = [];
-    }
-    traceShape(ctx) {
-        this._children.filter(c => c.traceShape !== undefined).forEach(c => c.traceShape(ctx));
-    }
-    customDraw(ctxt) {
-        if (this.isActive || this.isVisible) {
-            this._children.forEach(c => {
-                // c.originX += this.originX + c.x;
-                // c.originY += this.originY + c.y;
-                c.draw(ctxt);
-                // c.originX -= this.originX + c.x;
-                // c.originY -= this.originY + c.y;
-            });
-        }
-    }
-    isHit(x, y) {
-        if (!this.isVisible) {
-            return false;
-        }
-        // Runs hitArea on every child.
-        let isHit = false;
-        for (const c of this._children) {
-            if (c.isVisible && c.isHit(x, y)) {
-                isHit = true;
+    // public addPreExecutor (f: Function) {
+    //     this._preExecutor.push(f);
+    // }
+    // public addPostExecutor (f: Function) {
+    //     this._postExecutor.push(f);
+    // }
+    addTween(target, tween, duration, toValues, paramKeys, callback, priority = 10, preFunc, postFunc) {
+        const start = Date.now();
+        const end = Date.now() + duration;
+        const startValues = paramKeys.map(k => target[k]);
+        const func = function () {
+            const now = Date.now();
+            if (preFunc !== undefined) {
+                preFunc();
             }
-        }
-        return isHit;
+            if (now >= end) {
+                paramKeys.forEach(function (k, i) { target[k] = toValues[i]; });
+                if (postFunc !== undefined) {
+                    postFunc(toValues);
+                }
+                if (callback !== undefined) {
+                    callback(target);
+                }
+                return false;
+            }
+            const results = startValues.map((v, i) => (tween || easing_1.easeLinear)(now - start, v, toValues[i] - v, duration));
+            paramKeys.forEach(function (p, i) { target[p] = results[i]; });
+            if (postFunc !== undefined) {
+                postFunc(results);
+            }
+            return true;
+        };
+        func["$priority"] = priority;
+        this._collection.push(func);
+        this._collection.sort((a, b) => a.$priority - b.$priority);
     }
 }
-exports.Group = Group;
-//# sourceMappingURL=Group.js.map
+exports.TweenManager = TweenManager;
+//# sourceMappingURL=TweenManager.js.map
 
 /***/ }),
 /* 21 */
@@ -2063,7 +2039,7 @@ function undefinedOr(arg, ctxProp) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const color_style_parser_1 = __webpack_require__(18);
+const color_style_parser_1 = __webpack_require__(8);
 /**
  * Class for StyleTweenHelper.
  */
@@ -2242,65 +2218,75 @@ exports.StyleTweenHelper = StyleTweenHelper;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const easing_1 = __webpack_require__(16);
-class TweenManager {
-    constructor() {
-        this._collection = [];
+const interfaces_1 = __webpack_require__(2);
+const BaseStyle_1 = __webpack_require__(1);
+class Group extends BaseStyle_1.BaseStyle {
+    constructor(canvas, ctx, name) {
+        super(canvas, ctx, name);
+        // Render children from high to 0 index.
+        this._children = [];
+        this.__isVisible = true;
+        this.__isActive = true;
     }
-    // private _preExecutor: Function[] = [];
-    // private _postExecutor: Function[] = [];
-    /**
-     * Execute tweens.
-     */
-    tween() {
-        // this._preExecutor.forEach(e => e());
-        this._collection = this._collection.filter(f => f());
-        // this._postExecutor.forEach(e => e());
+    get type() {
+        return interfaces_1.ShapeType.GROUP;
     }
-    clear() {
-        this._collection = [];
-        // this._preExecutor = [];
-        // this._postExecutor = [];
+    get isActive() { return this.__isActive; }
+    set isActive(v) { this.__isActive = v; }
+    get isVisible() { return this.__isVisible; }
+    set isVisible(v) { this.__isVisible = v; }
+    withText() {
+        throw new Error("This method is not supported in StyleManager.");
     }
-    // public addPreExecutor (f: Function) {
-    //     this._preExecutor.push(f);
-    // }
-    // public addPostExecutor (f: Function) {
-    //     this._postExecutor.push(f);
-    // }
-    addTween(target, tween, duration, toValues, paramKeys, callback, priority = 10, preFunc, postFunc) {
-        const start = Date.now();
-        const end = Date.now() + duration;
-        const startValues = paramKeys.map(k => target[k]);
-        const func = function () {
-            const now = Date.now();
-            if (preFunc !== undefined) {
-                preFunc();
+    numChildren() {
+        return this._children.length;
+    }
+    addChild(shape) {
+        this._children.push(shape);
+        return this;
+    }
+    removeChild(shape) {
+        this._children = this._children.filter(s => s === shape);
+        return this;
+    }
+    removeChildAt(index) {
+        const child = this._children[index];
+        this._children = this._children.filter(s => s !== child);
+        return child;
+    }
+    removeAllChildren() {
+        this._children = [];
+    }
+    traceShape(ctx) {
+        this._children.filter(c => c.traceShape !== undefined).forEach(c => c.traceShape(ctx));
+    }
+    customDraw(ctxt) {
+        if (this.isActive || this.isVisible) {
+            this._children.forEach(c => {
+                // c.originX += this.originX + c.x;
+                // c.originY += this.originY + c.y;
+                c.draw(ctxt);
+                // c.originX -= this.originX + c.x;
+                // c.originY -= this.originY + c.y;
+            });
+        }
+    }
+    isHit(x, y) {
+        if (!this.isVisible) {
+            return false;
+        }
+        // Runs hitArea on every child.
+        let isHit = false;
+        for (const c of this._children) {
+            if (c.isVisible && c.isHit(x, y)) {
+                isHit = true;
             }
-            if (now >= end) {
-                paramKeys.forEach(function (k, i) { target[k] = toValues[i]; });
-                if (postFunc !== undefined) {
-                    postFunc(toValues);
-                }
-                if (callback !== undefined) {
-                    callback(target);
-                }
-                return false;
-            }
-            const results = startValues.map((v, i) => (tween || easing_1.easeLinear)(now - start, v, toValues[i] - v, duration));
-            paramKeys.forEach(function (p, i) { target[p] = results[i]; });
-            if (postFunc !== undefined) {
-                postFunc(results);
-            }
-            return true;
-        };
-        func["$priority"] = priority;
-        this._collection.push(func);
-        this._collection.sort((a, b) => a.$priority - b.$priority);
+        }
+        return isHit;
     }
 }
-exports.TweenManager = TweenManager;
-//# sourceMappingURL=TweenManager.js.map
+exports.Group = Group;
+//# sourceMappingURL=Group.js.map
 
 /***/ }),
 /* 24 */
@@ -2310,82 +2296,60 @@ exports.TweenManager = TweenManager;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
-const ArcShape_1 = __webpack_require__(6);
-const base_component_1 = __webpack_require__(3);
-class NgvasArcComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(ArcShape_1.ArcShape);
-    }
-    set connectToCenter(c) {
-        this.execOrDelay((s) => s.connectToCenter(c));
-    }
-    set radius(v) {
-        if (Array.isArray(v)) {
-            this.execOrDelay((s) => s.withRadius(v[0], v[1], v[2], v[3]));
-        }
-        else {
-            this.execOrDelay((s) => s.withRadius(v));
-        }
-    }
-    set angle(v) {
-        if (Array.isArray(v)) {
-            this.execOrDelay((s) => s.withAngle(v[0], v[1], v[2], v[3]));
-        }
-        else {
-            this.execOrDelay((s) => s.withAngle(v));
-        }
-    }
+const common_1 = __webpack_require__(25);
+const ngvas_component_1 = __webpack_require__(26);
+const ngvas_arc_component_1 = __webpack_require__(27);
+const ngvas_bezier_component_1 = __webpack_require__(28);
+const ngvas_circle_component_1 = __webpack_require__(29);
+const ngvas_image_component_1 = __webpack_require__(30);
+const ngvas_line_component_1 = __webpack_require__(31);
+const ngvas_polygon_component_1 = __webpack_require__(32);
+const ngvas_quadratic_component_1 = __webpack_require__(33);
+const ngvas_rectange_component_1 = __webpack_require__(34);
+const ngvas_text_component_1 = __webpack_require__(35);
+class NgvasModule {
 }
-NgvasArcComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-arc",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasArcComponent }],
+NgvasModule.decorators = [
+    { type: core_1.NgModule, args: [{
+                imports: [
+                    common_1.CommonModule,
+                ],
+                declarations: [
+                    ngvas_component_1.NgvasComponent,
+                    ngvas_arc_component_1.NgvasArcComponent,
+                    ngvas_bezier_component_1.NgvasBezierCurveComponent,
+                    ngvas_circle_component_1.NgvasCircleComponent,
+                    ngvas_image_component_1.NgvasImageComponent,
+                    ngvas_line_component_1.NgvasLineComponent,
+                    ngvas_polygon_component_1.NgvasPolygonComponent,
+                    ngvas_quadratic_component_1.NgvasQuadraticCurveComponent,
+                    ngvas_rectange_component_1.NgvasRectangleComponent,
+                    ngvas_text_component_1.NgvasTextComponent,
+                ],
+                exports: [
+                    ngvas_component_1.NgvasComponent,
+                    ngvas_arc_component_1.NgvasArcComponent,
+                    ngvas_bezier_component_1.NgvasBezierCurveComponent,
+                    ngvas_circle_component_1.NgvasCircleComponent,
+                    ngvas_image_component_1.NgvasImageComponent,
+                    ngvas_line_component_1.NgvasLineComponent,
+                    ngvas_polygon_component_1.NgvasPolygonComponent,
+                    ngvas_quadratic_component_1.NgvasQuadraticCurveComponent,
+                    ngvas_rectange_component_1.NgvasRectangleComponent,
+                    ngvas_text_component_1.NgvasTextComponent,
+                ],
             },] },
 ];
 /** @nocollapse */
-NgvasArcComponent.ctorParameters = () => [];
-NgvasArcComponent.propDecorators = {
-    'connectToCenter': [{ type: core_1.Input, args: ["connectToCenter",] },],
-    'radius': [{ type: core_1.Input, args: ["radius",] },],
-    'angle': [{ type: core_1.Input, args: ["angle",] },],
-};
-exports.NgvasArcComponent = NgvasArcComponent;
-//# sourceMappingURL=ngvas-arc.component.js.map
+NgvasModule.ctorParameters = () => [];
+exports.NgvasModule = NgvasModule;
+//# sourceMappingURL=ngvas.module.js.map
 
 /***/ }),
 /* 25 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const BezierCurveShape_1 = __webpack_require__(8);
-const base_component_1 = __webpack_require__(3);
-class NgvasBezierCurveComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(BezierCurveShape_1.BezierCurveShape);
-    }
-    set curves(cs) { this.execOrDelay((s) => { s.clear(); cs.forEach(c => s.addCurve(c)); }); }
-    ;
-}
-NgvasBezierCurveComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-bezier",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasBezierCurveComponent }],
-            },] },
-];
-/** @nocollapse */
-NgvasBezierCurveComponent.ctorParameters = () => [];
-NgvasBezierCurveComponent.propDecorators = {
-    'curves': [{ type: core_1.Input, args: ["curves",] },],
-};
-exports.NgvasBezierCurveComponent = NgvasBezierCurveComponent;
-//# sourceMappingURL=ngvas-bezier.component.js.map
+module.exports = __WEBPACK_EXTERNAL_MODULE_25__;
 
 /***/ }),
 /* 26 */
@@ -2395,259 +2359,7 @@ exports.NgvasBezierCurveComponent = NgvasBezierCurveComponent;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(0);
-const CircleShape_1 = __webpack_require__(9);
-const base_component_1 = __webpack_require__(3);
-class NgvasCircleComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(CircleShape_1.CircleShape);
-    }
-    set radius(v) {
-        if (Array.isArray(v)) {
-            this.execOrDelay((s) => s.withRadius(v[0], v[1], v[2], v[3]));
-        }
-        else {
-            this.execOrDelay((s) => s.withRadius(v));
-        }
-    }
-}
-NgvasCircleComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-circle",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasCircleComponent }],
-            },] },
-];
-/** @nocollapse */
-NgvasCircleComponent.ctorParameters = () => [];
-NgvasCircleComponent.propDecorators = {
-    'radius': [{ type: core_1.Input, args: ["radius",] },],
-};
-exports.NgvasCircleComponent = NgvasCircleComponent;
-//# sourceMappingURL=ngvas-circle.component.js.map
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const ImageShape_1 = __webpack_require__(10);
-const base_component_1 = __webpack_require__(3);
-class NgvasImageComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(ImageShape_1.ImageShape);
-    }
-    set src(i) { this.execOrDelay((s) => s.withImage(i)); }
-    ;
-}
-NgvasImageComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-image",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasImageComponent }],
-            },] },
-];
-/** @nocollapse */
-NgvasImageComponent.ctorParameters = () => [];
-NgvasImageComponent.propDecorators = {
-    'src': [{ type: core_1.Input, args: ["src",] },],
-};
-exports.NgvasImageComponent = NgvasImageComponent;
-//# sourceMappingURL=ngvas-image.component.js.map
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const LineShape_1 = __webpack_require__(11);
-const base_component_1 = __webpack_require__(3);
-class NgvasLineComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(LineShape_1.LineShape);
-    }
-    set lines(ls) { this.execOrDelay((s) => { s.clear(); ls.forEach(l => s.addLine(l)); }); }
-    ;
-}
-NgvasLineComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-line",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasLineComponent }],
-            },] },
-];
-/** @nocollapse */
-NgvasLineComponent.ctorParameters = () => [];
-NgvasLineComponent.propDecorators = {
-    'lines': [{ type: core_1.Input, args: ["lines",] },],
-};
-exports.NgvasLineComponent = NgvasLineComponent;
-//# sourceMappingURL=ngvas-line.component.js.map
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const PolyShape_1 = __webpack_require__(12);
-const base_component_1 = __webpack_require__(3);
-class NgvasPolygonComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(PolyShape_1.PolyShape);
-    }
-    set sides(ls) {
-        this.execOrDelay((s) => {
-            s.clear();
-            for (const l of ls) {
-                if (l.length === 2) {
-                    s.addLine(l);
-                }
-                else if (l.length === 3) {
-                    s.addQuadratic(l);
-                }
-                else if (l.length === 4) {
-                    s.addBezier(l);
-                }
-            }
-        });
-    }
-    ;
-}
-NgvasPolygonComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-polygon",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasPolygonComponent }],
-            },] },
-];
-/** @nocollapse */
-NgvasPolygonComponent.ctorParameters = () => [];
-NgvasPolygonComponent.propDecorators = {
-    'sides': [{ type: core_1.Input, args: ["sides",] },],
-};
-exports.NgvasPolygonComponent = NgvasPolygonComponent;
-//# sourceMappingURL=ngvas-polygon.component.js.map
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const QuadraticCurveShape_1 = __webpack_require__(13);
-const base_component_1 = __webpack_require__(3);
-class NgvasQuadraticCurveComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(QuadraticCurveShape_1.QuadraticCurveShape);
-    }
-    set curves(cs) { this.execOrDelay((s) => { s.clear(); cs.forEach(c => s.addCurve(c)); }); }
-    ;
-}
-NgvasQuadraticCurveComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-quadratic",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasQuadraticCurveComponent }],
-            },] },
-];
-/** @nocollapse */
-NgvasQuadraticCurveComponent.ctorParameters = () => [];
-NgvasQuadraticCurveComponent.propDecorators = {
-    'curves': [{ type: core_1.Input, args: ["curves",] },],
-};
-exports.NgvasQuadraticCurveComponent = NgvasQuadraticCurveComponent;
-//# sourceMappingURL=ngvas-quadratic.component.js.map
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const RectShape_1 = __webpack_require__(14);
-const base_component_1 = __webpack_require__(3);
-class NgvasRectangleComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(RectShape_1.RectShape);
-    }
-}
-NgvasRectangleComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-rectangle",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasRectangleComponent }],
-            },] },
-];
-/** @nocollapse */
-NgvasRectangleComponent.ctorParameters = () => [];
-exports.NgvasRectangleComponent = NgvasRectangleComponent;
-//# sourceMappingURL=ngvas-rectange.component.js.map
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const TextShape_1 = __webpack_require__(15);
-const base_component_1 = __webpack_require__(3);
-class NgvasTextComponent extends base_component_1.NgvasBaseComponent {
-    constructor() {
-        super(TextShape_1.TextShape);
-    }
-    set text(t) { this.execOrDelay((s) => s.text = t); }
-    ;
-    set textStyle(t) {
-        this.execOrDelay((s) => s.textStyle(t.font, t.align, t.baseline));
-    }
-    ;
-}
-NgvasTextComponent.decorators = [
-    { type: core_1.Component, args: [{
-                // moduleId: String(module.id),
-                selector: "ngvas-text",
-                template: "",
-                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasTextComponent }],
-            },] },
-];
-/** @nocollapse */
-NgvasTextComponent.ctorParameters = () => [];
-NgvasTextComponent.propDecorators = {
-    'text': [{ type: core_1.Input, args: ["text",] },],
-    'textStyle': [{ type: core_1.Input, args: ["textStyle",] },],
-};
-exports.NgvasTextComponent = NgvasTextComponent;
-//# sourceMappingURL=ngvas-text.component.js.map
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __webpack_require__(0);
-const CanvasGroup_1 = __webpack_require__(4);
+const CanvasGroup_1 = __webpack_require__(9);
 const base_component_1 = __webpack_require__(3);
 class NgvasComponent {
     constructor(renderer) {
@@ -2720,64 +2432,341 @@ exports.NgvasComponent = NgvasComponent;
 //# sourceMappingURL=ngvas.component.js.map
 
 /***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(0);
+const ArcShape_1 = __webpack_require__(10);
+const base_component_1 = __webpack_require__(3);
+class NgvasArcComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(ArcShape_1.ArcShape);
+    }
+    set connectToCenter(c) {
+        this.execOrDelay((s) => s.connectToCenter(c));
+    }
+    set radius(v) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s) => s.withRadius(v[0], v[1], v[2], v[3]));
+        }
+        else {
+            this.execOrDelay((s) => s.withRadius(v));
+        }
+    }
+    set angle(v) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s) => s.withAngle(v[0], v[1], v[2], v[3]));
+        }
+        else {
+            this.execOrDelay((s) => s.withAngle(v));
+        }
+    }
+}
+NgvasArcComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-arc",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasArcComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasArcComponent.ctorParameters = () => [];
+NgvasArcComponent.propDecorators = {
+    'connectToCenter': [{ type: core_1.Input, args: ["connectToCenter",] },],
+    'radius': [{ type: core_1.Input, args: ["radius",] },],
+    'angle': [{ type: core_1.Input, args: ["angle",] },],
+};
+exports.NgvasArcComponent = NgvasArcComponent;
+//# sourceMappingURL=ngvas-arc.component.js.map
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(0);
+const BezierCurveShape_1 = __webpack_require__(11);
+const base_component_1 = __webpack_require__(3);
+class NgvasBezierCurveComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(BezierCurveShape_1.BezierCurveShape);
+    }
+    set curves(cs) { this.execOrDelay((s) => { s.clear(); cs.forEach(c => s.addCurve(c)); }); }
+    ;
+}
+NgvasBezierCurveComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-bezier",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasBezierCurveComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasBezierCurveComponent.ctorParameters = () => [];
+NgvasBezierCurveComponent.propDecorators = {
+    'curves': [{ type: core_1.Input, args: ["curves",] },],
+};
+exports.NgvasBezierCurveComponent = NgvasBezierCurveComponent;
+//# sourceMappingURL=ngvas-bezier.component.js.map
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(0);
+const CircleShape_1 = __webpack_require__(12);
+const base_component_1 = __webpack_require__(3);
+class NgvasCircleComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(CircleShape_1.CircleShape);
+    }
+    set radius(v) {
+        if (Array.isArray(v)) {
+            this.execOrDelay((s) => s.withRadius(v[0], v[1], v[2], v[3]));
+        }
+        else {
+            this.execOrDelay((s) => s.withRadius(v));
+        }
+    }
+}
+NgvasCircleComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-circle",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasCircleComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasCircleComponent.ctorParameters = () => [];
+NgvasCircleComponent.propDecorators = {
+    'radius': [{ type: core_1.Input, args: ["radius",] },],
+};
+exports.NgvasCircleComponent = NgvasCircleComponent;
+//# sourceMappingURL=ngvas-circle.component.js.map
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(0);
+const ImageShape_1 = __webpack_require__(13);
+const base_component_1 = __webpack_require__(3);
+class NgvasImageComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(ImageShape_1.ImageShape);
+    }
+    set src(i) { this.execOrDelay((s) => s.withImage(i)); }
+    ;
+}
+NgvasImageComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-image",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasImageComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasImageComponent.ctorParameters = () => [];
+NgvasImageComponent.propDecorators = {
+    'src': [{ type: core_1.Input, args: ["src",] },],
+};
+exports.NgvasImageComponent = NgvasImageComponent;
+//# sourceMappingURL=ngvas-image.component.js.map
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(0);
+const LineShape_1 = __webpack_require__(14);
+const base_component_1 = __webpack_require__(3);
+class NgvasLineComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(LineShape_1.LineShape);
+    }
+    set lines(ls) { this.execOrDelay((s) => { s.clear(); ls.forEach(l => s.addLine(l)); }); }
+    ;
+}
+NgvasLineComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-line",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasLineComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasLineComponent.ctorParameters = () => [];
+NgvasLineComponent.propDecorators = {
+    'lines': [{ type: core_1.Input, args: ["lines",] },],
+};
+exports.NgvasLineComponent = NgvasLineComponent;
+//# sourceMappingURL=ngvas-line.component.js.map
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(0);
+const PolyShape_1 = __webpack_require__(15);
+const base_component_1 = __webpack_require__(3);
+class NgvasPolygonComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(PolyShape_1.PolyShape);
+    }
+    set sides(ls) {
+        this.execOrDelay((s) => {
+            s.clear();
+            for (const l of ls) {
+                if (l.length === 2) {
+                    s.addLine(l);
+                }
+                else if (l.length === 3) {
+                    s.addQuadratic(l);
+                }
+                else if (l.length === 4) {
+                    s.addBezier(l);
+                }
+            }
+        });
+    }
+    ;
+}
+NgvasPolygonComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-polygon",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasPolygonComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasPolygonComponent.ctorParameters = () => [];
+NgvasPolygonComponent.propDecorators = {
+    'sides': [{ type: core_1.Input, args: ["sides",] },],
+};
+exports.NgvasPolygonComponent = NgvasPolygonComponent;
+//# sourceMappingURL=ngvas-polygon.component.js.map
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(0);
+const QuadraticCurveShape_1 = __webpack_require__(16);
+const base_component_1 = __webpack_require__(3);
+class NgvasQuadraticCurveComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(QuadraticCurveShape_1.QuadraticCurveShape);
+    }
+    set curves(cs) { this.execOrDelay((s) => { s.clear(); cs.forEach(c => s.addCurve(c)); }); }
+    ;
+}
+NgvasQuadraticCurveComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-quadratic",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasQuadraticCurveComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasQuadraticCurveComponent.ctorParameters = () => [];
+NgvasQuadraticCurveComponent.propDecorators = {
+    'curves': [{ type: core_1.Input, args: ["curves",] },],
+};
+exports.NgvasQuadraticCurveComponent = NgvasQuadraticCurveComponent;
+//# sourceMappingURL=ngvas-quadratic.component.js.map
+
+/***/ }),
 /* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const PixelHitArea_1 = __webpack_require__(5);
-const BaseStyle_1 = __webpack_require__(1);
-const _tweenEasings = __webpack_require__(16);
-const CanvasGroup_1 = __webpack_require__(4);
-const ArcShape_1 = __webpack_require__(6);
-const BaseShape_1 = __webpack_require__(7);
-const BezierCurveShape_1 = __webpack_require__(8);
-const CircleShape_1 = __webpack_require__(9);
-const ImageShape_1 = __webpack_require__(10);
-const LineShape_1 = __webpack_require__(11);
-const PolyShape_1 = __webpack_require__(12);
-const QuadraticCurveShape_1 = __webpack_require__(13);
-const RectShape_1 = __webpack_require__(14);
-const TextShape_1 = __webpack_require__(15);
-var ngvas_module_1 = __webpack_require__(19);
-exports.NgvasModule = ngvas_module_1.NgvasModule;
-var hitAreas;
-(function (hitAreas) {
-    hitAreas.PixelHitArea = PixelHitArea_1.PixelHitArea;
-})(hitAreas = exports.hitAreas || (exports.hitAreas = {}));
-var tweens;
-(function (tweens) {
-    tweens.easings = _tweenEasings;
-})(tweens = exports.tweens || (exports.tweens = {}));
-var shapes;
-(function (shapes) {
-    shapes.BaseShape = BaseShape_1.BaseShape;
-    shapes.BaseStyle = BaseStyle_1.BaseStyle;
-    shapes.CanvasGroup = CanvasGroup_1.CanvasGroup;
-    shapes.ArcShape = ArcShape_1.ArcShape;
-    shapes.BezierCurveShape = BezierCurveShape_1.BezierCurveShape;
-    shapes.CircleShape = CircleShape_1.CircleShape;
-    shapes.ImageShape = ImageShape_1.ImageShape;
-    shapes.LineShape = LineShape_1.LineShape;
-    shapes.PolyShape = PolyShape_1.PolyShape;
-    shapes.QuadraticCurveShape = QuadraticCurveShape_1.QuadraticCurveShape;
-    shapes.RectShape = RectShape_1.RectShape;
-    shapes.TextShape = TextShape_1.TextShape;
-})(shapes = exports.shapes || (exports.shapes = {}));
-//# sourceMappingURL=index.js.map
+const core_1 = __webpack_require__(0);
+const RectShape_1 = __webpack_require__(17);
+const base_component_1 = __webpack_require__(3);
+class NgvasRectangleComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(RectShape_1.RectShape);
+    }
+}
+NgvasRectangleComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-rectangle",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasRectangleComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasRectangleComponent.ctorParameters = () => [];
+exports.NgvasRectangleComponent = NgvasRectangleComponent;
+//# sourceMappingURL=ngvas-rectange.component.js.map
 
 /***/ }),
 /* 35 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_35__;
+"use strict";
 
-/***/ }),
-/* 36 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_36__;
+Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(0);
+const TextShape_1 = __webpack_require__(18);
+const base_component_1 = __webpack_require__(3);
+class NgvasTextComponent extends base_component_1.NgvasBaseComponent {
+    constructor() {
+        super(TextShape_1.TextShape);
+    }
+    set text(t) { this.execOrDelay((s) => s.text = t); }
+    ;
+    set textStyle(t) {
+        this.execOrDelay((s) => s.textStyle(t.font, t.align, t.baseline));
+    }
+    ;
+}
+NgvasTextComponent.decorators = [
+    { type: core_1.Component, args: [{
+                // moduleId: String(module.id),
+                selector: "ngvas-text",
+                template: "",
+                providers: [{ provide: base_component_1.NgvasBaseComponent, useExisting: NgvasTextComponent }],
+            },] },
+];
+/** @nocollapse */
+NgvasTextComponent.ctorParameters = () => [];
+NgvasTextComponent.propDecorators = {
+    'text': [{ type: core_1.Input, args: ["text",] },],
+    'textStyle': [{ type: core_1.Input, args: ["textStyle",] },],
+};
+exports.NgvasTextComponent = NgvasTextComponent;
+//# sourceMappingURL=ngvas-text.component.js.map
 
 /***/ })
 /******/ ]);

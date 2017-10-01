@@ -10,7 +10,8 @@ import { NgvasModule, tweens, hitAreas } from "ngvas";
   selector: "ngvas-app",
   template: `
     <h1>Ngvas App Demo</h1>
-    <ngvas [width]="500" [height]="500" (ready)="tweenComplete()">
+    <div><button (click)="toggleCanvasSize()">Toggle Canvas Size</button></div>
+    <ngvas [width]="cWidth" [height]="cHeight" (ready)="tweenComplete()">
 
       <ngvas-rectangle [fill]="fill" [translate]="xy" [size]="size" [rotate]="rotate" origin="center"></ngvas-rectangle>
       <ngvas-circle [stroke]="stroke" [translate]="xy" [radius]="50" origin="center"></ngvas-circle>
@@ -39,6 +40,8 @@ class AppComponent {
   private _xy   = [ [0, -300], [300, 0], [0, 300], [-300, 0] ];
   private _fill = [ 0xff0000, 0xffff00, 0x00ff00, 0x0000ff ];
 
+  public cWidth = 500;
+  public cHeight = 500;
   public size: any   = [this._size[0], this._size[0]];
   public rotate: any = 0;
   public xy: any     = [ 100, 100 ];
@@ -50,6 +53,13 @@ class AppComponent {
 
   public pixelHitArea = hitAreas.PixelHitArea;
 
+  public toggleCanvasSize () {
+    if (this.cWidth === 500) {
+      this.cWidth = this.cHeight = 400;
+    } else {
+      this.cWidth = this.cHeight = 500;
+    }
+  }
 
   public tweenComplete () {
     // Prevents Angular Error: "Expression has changed after it was checked."

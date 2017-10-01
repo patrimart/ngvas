@@ -2371,9 +2371,15 @@ class NgvasComponent {
     }
     set width(w) {
         this._width = +w;
+        if (this._canvasGroup) {
+            this._canvasGroup.context.canvas.width = +w;
+        }
     }
     set height(h) {
         this._height = +h;
+        if (this._canvasGroup) {
+            this._canvasGroup.context.canvas.height = +h;
+        }
     }
     set active(a) {
         this._isActive = a;
